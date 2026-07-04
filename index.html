@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weird Red Hello</title>
+  <title>AI Before It Was Ready</title>
   <style>
     :root {
-      --red: #ff2d2d;
-      --dark: #120000;
+      --ink: #17110f;
+      --paper: #f8efe6;
+      --accent: #d94b2b;
+      --accent-soft: #ff9d72;
+      --line: rgba(23, 17, 15, 0.25);
     }
 
     * { box-sizing: border-box; }
@@ -15,79 +18,299 @@
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,45,45,0.25), transparent 25%),
-        radial-gradient(circle at 80% 80%, rgba(255,90,90,0.2), transparent 30%),
-        var(--dark);
-      font-family: "Courier New", Courier, monospace;
-      color: var(--red);
+      background: linear-gradient(135deg, #fff7ed, #f3dfce 45%, #ead5bf);
+      color: var(--ink);
+      font-family: "Georgia", "Times New Roman", serif;
+      overflow-x: hidden;
     }
 
-    .scene {
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.15),
+        rgba(255,255,255,0.15) 1px,
+        transparent 1px,
+        transparent 10px
+      );
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
       position: relative;
-      padding: 3rem;
-      border: 4px solid var(--red);
-      box-shadow: 0 0 30px rgba(255,45,45,0.6);
-      transform: rotate(-3deg);
-      animation: wobble 2.5s infinite alternate ease-in-out;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(3px);
     }
 
-    .blob {
+    .hero {
+      position: relative;
+      border: 2px solid var(--line);
+      background: rgba(248, 239, 230, 0.88);
+      padding: 2rem;
+      box-shadow: 8px 8px 0 rgba(23, 17, 15, 0.12);
+      transform: rotate(-1.2deg);
+      transition: transform 0.25s ease;
+      overflow: hidden;
+    }
+
+    .hero:hover {
+      transform: rotate(-0.4deg) scale(1.005);
+    }
+
+    .hero .smudge {
       position: absolute;
+      inset: auto -30px -50px auto;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
-      background: rgba(255,45,45,0.15);
-      filter: blur(8px);
-      animation: drift 6s infinite alternate ease-in-out;
+      background: radial-gradient(circle, rgba(217,75,43,0.24), transparent 70%);
+      filter: blur(6px);
+      pointer-events: none;
     }
 
-    .blob.one { width: 130px; height: 130px; top: -20px; left: -20px; }
-    .blob.two { width: 90px; height: 90px; bottom: -15px; right: -10px; animation-duration: 5s; }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      font-size: 0.77rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
 
     h1 {
       margin: 0;
-      font-size: clamp(3rem, 10vw, 7rem);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(255,45,45,0.7);
-      animation: pulse 1.2s infinite alternate;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: 1.05;
     }
 
-    .subtitle {
+    .lead {
+      font-size: 1.05rem;
+      max-width: 700px;
       margin-top: 1rem;
-      font-size: 1rem;
-      text-align: center;
-      letter-spacing: 0.3em;
+      line-height: 1.7;
+      color: rgba(23, 17, 15, 0.8);
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.2rem;
+      margin-top: 1.4rem;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      padding: 1rem;
+      box-shadow: 4px 4px 0 rgba(23, 17, 15, 0.08);
+      transform: rotate(-0.5deg);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .panel:hover {
+      transform: rotate(0deg) translateY(-2px);
+      box-shadow: 6px 6px 0 rgba(23, 17, 15, 0.12);
+    }
+
+    .panel h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1.05rem;
       text-transform: uppercase;
-      color: #ffb0b0;
+      letter-spacing: 0.18em;
     }
 
-    @keyframes wobble {
-      from { transform: rotate(-4deg) scale(0.98); }
-      to { transform: rotate(4deg) scale(1.02); }
+    .panel p {
+      margin: 0;
+      line-height: 1.6;
+      font-size: 0.95rem;
     }
 
-    @keyframes pulse {
-      from { opacity: 0.85; transform: translateY(0); }
-      to { opacity: 1; transform: translateY(-4px); }
+    .timeline {
+      margin-top: 1.4rem;
+      display: grid;
+      gap: 1rem;
     }
 
-    @keyframes drift {
-      from { transform: translate(0,0); }
-      to { transform: translate(15px,-20px); }
+    .stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(248, 239, 230, 0.95);
+      padding: 1rem;
+      box-shadow: 6px 6px 0 rgba(23, 17, 15, 0.08);
+      transform: rotate(-0.4deg);
+      transition: transform 0.2s ease;
+    }
+
+    .stage.active {
+      outline: 2px solid var(--accent);
+      transform: rotate(0.2deg) translateY(-2px);
+    }
+
+    .stage img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      display: block;
+    }
+
+    .stage-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .stage h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .stage p {
+      margin: 0;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    button {
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 0.6rem 0.9rem;
+      cursor: pointer;
+      font: inherit;
+      box-shadow: 3px 3px 0 rgba(23, 17, 15, 0.1);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: #fff7eb;
+    }
+
+    .tiny {
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(23, 17, 15, 0.7);
+    }
+
+    @media (max-width: 800px) {
+      .intro-grid,
+      .stage {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="scene">
-    <div class="blob one"></div>
-    <div class="blob two"></div>
-    <h1>Hello World</h1>
-    <div class="subtitle">a very red little nightmare</div>
+  <div class="page">
+    <section class="hero">
+      <div class="smudge"></div>
+      <div class="eyebrow">unfinished archive · 1950s → now</div>
+      <h1>The Evolution of AI, Still Being Painted</h1>
+      <p class="lead">
+        AI did not appear all at once. It arrived in layers: rules, experiments, machines learning from data, and then a strange new era where language itself became a medium. The interface feels half-dried on purpose — like a history that is still settling into shape.
+      </p>
+      <div class="intro-grid">
+        <div class="panel">
+          <h2>Context</h2>
+          <p>
+            Early AI was built on carefully written logic, as if a mind could be assembled from instructions. Then came neural networks, then deep learning, and now generative systems that can write, draw, and converse. Each step made the future less predictable and more intimate.
+          </p>
+        </div>
+        <div class="panel">
+          <h2>Why it feels early</h2>
+          <p>
+            The tools are powerful, yet the boundaries are still shifting. Each new wave changes what we think intelligence is, who gets to shape it, and what the consequences might be. The site is meant to feel like that: not complete, only becoming.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button data-target="0">Rule-Based Beginnings</button>
+      <button data-target="1">Neural Networks</button>
+      <button data-target="2">Deep Learning Boom</button>
+      <button data-target="3">Generative AI</button>
+    </div>
+
+    <section class="timeline" id="timeline"></section>
   </div>
+
+  <script>
+    const stages = [
+      {
+        title: 'Rule-Based Beginnings',
+        text: 'In the 1950s and 60s, researchers tried to build intelligence by encoding logic into rules. It worked for tightly defined tasks, but it could not cope with the messy world outside the lab.',
+        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80'
+      },
+      {
+        title: 'Neural Networks',
+        text: 'During the 1980s and 90s, the idea of brain-like networks returned. These systems learned patterns from examples and hinted at a more flexible kind of intelligence.',
+        image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=900&q=80'
+      },
+      {
+        title: 'Deep Learning Boom',
+        text: 'With larger datasets, more compute, and better hardware, AI became dramatically more capable. Image recognition, speech, and translation all accelerated into practical tools.',
+        image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80'
+      },
+      {
+        title: 'Generative AI',
+        text: 'Now AI writes poems, designs images, and helps build software. The field has become less like a calculator and more like a collaborator that keeps changing shape in real time.',
+        image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=900&q=80'
+      }
+    ];
+
+    const timeline = document.getElementById('timeline');
+    const buttons = document.querySelectorAll('button');
+    let activeIndex = 0;
+
+    function renderStage(index) {
+      const stage = stages[index];
+      timeline.innerHTML = `
+        <article class="stage active">
+          <img src="${stage.image}" alt="${stage.title}">
+          <div class="stage-content">
+            <div class="tiny">Era ${index + 1} / ${stages.length}</div>
+            <h3>${stage.title}</h3>
+            <p>${stage.text}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeIndex = Number(button.dataset.target);
+        renderStage(activeIndex);
+      });
+    });
+
+    renderStage(activeIndex);
+
+    window.addEventListener('pointermove', (event) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 8;
+      const y = (event.clientY / window.innerHeight - 0.5) * 8;
+      document.querySelector('.hero').style.transform = `rotate(${-1.2 + x * 0.08}deg) translate(${x * 0.6}px, ${y * 0.6}px)`;
+    });
+
+    window.addEventListener('pointerleave', () => {
+      document.querySelector('.hero').style.transform = 'rotate(-1.2deg)';
+    });
+  </script>
 </body>
 </html>
