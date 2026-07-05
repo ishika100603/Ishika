@@ -1,6 +1,4 @@
 # Project: Clean and Simple Web Application
-
-## Design Principles
 - Maintain minimal design principles
 - Always include detailed comments for every function and complex logic
 - Keep code readable and simple - avoid over-engineering
