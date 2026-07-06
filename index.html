@@ -3,68 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dream Factory | Interactive Journey</title>
+    <title>Questioning Everything Always</title>
     <meta
       name="description"
-      content="An immersive, keyboard-driven website experience with 3D-style destination cards and illuminated scene pages."
+      content="A single-screen interactive landing page where a car-shaped cursor reveals the hidden message through a moving headlight."
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="experience" id="experience">
-      <p class="hud" id="hud">Use the arrow keys to ride between destinations. Press Enter to enter.</p>
-
-      <section class="scene home-scene" id="homeScene">
-        <div class="sky"></div>
-        <div class="road"></div>
-        <div class="road-markers">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-
-        <div class="title-panel">
-          <p class="eyebrow">Dream Factory</p>
-          <h1>Ride through a cinematic digital world.</h1>
-          <p>
-            Choose a destination, steer with the keyboard, and step into a new scene.
-          </p>
-        </div>
-
-        <div class="option-row" aria-label="Destination options">
-          <button class="option-card is-active" data-index="0">
-            <span>01</span>
-            <strong>About Us</strong>
-          </button>
-          <button class="option-card" data-index="1">
-            <span>02</span>
-            <strong>Contact</strong>
-          </button>
-        </div>
-      </section>
-
-      <section class="scene page-scene" id="pageScene" aria-hidden="true">
-        <div class="page-backdrop"></div>
-
-        <div class="car-scene">
-          <div class="car-body">
-            <div class="car-window"></div>
-            <div class="car-light light-left"></div>
-            <div class="car-light light-right"></div>
-          </div>
-          <div class="beam" id="beam"></div>
-        </div>
-
-        <div class="content-panel" id="contentPanel">
-          <p class="eyebrow" id="pageEyebrow">Destination</p>
-          <h2 id="pageTitle">About Us</h2>
-          <p id="pageText">
-            We design immersive digital journeys that feel like stepping into a living story.
-          </p>
-          <p class="hint">Use the arrow keys to switch scenes. Press Enter to return home.</p>
-        </div>
-      </section>
-    </div>
+    <main class="stage" id="stage">
+      <div class="overlay" id="overlay"></div>
+      <div class="message" id="message">Questioning Everything Always</div>
+      <div class="light-beam" id="lightBeam"></div>
+      <div class="car-cursor" id="carCursor" aria-hidden="true">
+        <div class="car-body"></div>
+        <div class="car-headlight"></div>
+      </div>
+    </main>
 
     <script src="script.js"></script>
   </body>
