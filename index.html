@@ -38,6 +38,7 @@
       height: 100vh;
       perspective: 1400px;
       overflow: hidden;
+      transition: filter 0.8s ease;
     }
 
     .world {
@@ -45,6 +46,19 @@
       inset: 0;
       transform-style: preserve-3d;
       transform: translateZ(-200px) rotateX(18deg);
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .scene-container.mode-about .world {
+      transform: translateZ(-120px) rotateX(16deg) translateY(-30px) rotateY(-10deg);
+    }
+
+    .scene-container.mode-work .world {
+      transform: translateZ(-120px) rotateX(16deg) translateY(-36px) rotateY(0deg);
+    }
+
+    .scene-container.mode-contact .world {
+      transform: translateZ(-120px) rotateX(16deg) translateY(-30px) rotateY(10deg);
     }
 
     .ground {
@@ -246,15 +260,65 @@
 
     .page-panel {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
+      width: min(460px, calc(100vw - 3rem));
+      max-height: 72vh;
+      padding: 1.4rem;
+      background: rgba(9, 17, 32, 0.92);
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      border-radius: 24px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
+      transform-style: preserve-3d;
+      transform-origin: center center;
+      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease, filter 0.65s ease, box-shadow 0.65s ease;
+      opacity: 0;
+      pointer-events: none;
+      filter: blur(1px);
       z-index: 11;
     }
 
     .page-panel.active {
-      display: block;
+      opacity: 1;
+      pointer-events: auto;
+      filter: blur(0);
+    }
+
+    .page-panel.lit {
+      border-color: rgba(0, 210, 255, 0.3);
+      box-shadow: 0 28px 72px rgba(0, 210, 255, 0.26);
+    }
+
+    .page-panel[data-page="about"] {
+      left: 22%;
+      top: 60%;
+      transform: translate(-50%, -50%) translateZ(60px) rotateX(12deg) rotateY(-18deg) scale(0.86);
+    }
+
+    .page-panel[data-page="work"] {
+      left: 50%;
+      top: 34%;
+      transform: translate(-50%, -50%) translateZ(100px) rotateX(14deg) scale(0.94);
+    }
+
+    .page-panel[data-page="contact"] {
+      left: 78%;
+      top: 60%;
+      transform: translate(-50%, -50%) translateZ(44px) rotateX(12deg) rotateY(18deg) scale(0.86);
+    }
+
+    .scene-container.mode-about .page-panel[data-page="about"],
+    .scene-container.mode-work .page-panel[data-page="work"],
+    .scene-container.mode-contact .page-panel[data-page="contact"] {
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%) translateZ(0px) rotateX(8deg) rotateY(0deg) scale(1.04);
+    }
+
+    .scene-container.mode-about .page-panel:not([data-page="about"]),
+    .scene-container.mode-work .page-panel:not([data-page="work"]),
+    .scene-container.mode-contact .page-panel:not([data-page="contact"]) {
+      opacity: 0.18;
+      pointer-events: none;
+      transform: translate(-50%, -50%) translateZ(-140px) rotateX(14deg) scale(0.72);
     }
 
     .page-panel .page-title {
@@ -334,6 +398,28 @@
     .work-card.spectral .work-icon {
       background: linear-gradient(135deg, rgba(16, 25, 46, 0.96), rgba(42, 58, 93, 0.96));
       color: #c8c6ff;
+    }
+
+    .work-card.lit {
+      transform: translateY(-4px);
+      border-color: rgba(0, 210, 255, 0.24);
+      background: rgba(0, 210, 255, 0.08);
+    }
+
+    .work-card .detail {
+      margin-top: 0.8rem;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.36s ease, max-height 0.36s ease;
+      color: #d8f7ff;
+      font-size: 0.89rem;
+      line-height: 1.6;
+    }
+
+    .work-card.lit .detail {
+      opacity: 1;
+      max-height: 4rem;
     }
 
     .fade-dark {
@@ -425,36 +511,39 @@
       </svg>
     </div>
 
-    <div class="page-panel" id="aboutPanel">
+    <div class="page-panel" id="aboutPanel" data-page="about">
       <h2 class="page-title">About Us</h2>
       <p class="page-text">This is a portfolio built as an exploration game. Each island is a chapter in the story: who we are, what we make, and how to reach us. The experience is meant to be discovered, not simply read.</p>
       <button class="button" data-action="back">Return to hub</button>
     </div>
 
-    <div class="page-panel" id="workPanel">
+    <div class="page-panel" id="workPanel" data-page="work">
       <h2 class="page-title">Our Work</h2>
       <p class="page-text">These works are rendered as interactive through the cursor. Reach each symbol to reveal a different artwork style.</p>
       <div class="grid">
-        <div class="work-card glitch">
+        <div class="work-card glitch" data-key="pixel">
           <div class="work-icon">▓▓</div>
           <h3>Pixel Distortion</h3>
           <p>A glitchy portal for the pixelated work. The car must align to this symbol to make the image visible.</p>
+          <div class="detail">The beam unlocks layered noise and shimmer as the symbol is approached.</div>
         </div>
-        <div class="work-card red">
+        <div class="work-card red" data-key="red">
           <div class="work-icon">⥢⥡</div>
           <h3>Red Hallucination</h3>
           <p>An intense red zone that appears like a fever dream. The lighting reveals the hidden texture at close range.</p>
+          <div class="detail">Close the beam and the red surface pulses with a hidden pattern.</div>
         </div>
-        <div class="work-card spectral">
+        <div class="work-card spectral" data-key="spiritual">
           <div class="work-icon">✧✦</div>
           <h3>Spiritual Letters</h3>
           <p>Floating text and symbols drift in the dark. Only by shining the headlights into the letters does the meaning surface.</p>
+          <div class="detail">The light makes the language glow and the letters lift from the page.</div>
         </div>
       </div>
       <button class="button" data-action="back">Return to hub</button>
     </div>
 
-    <div class="page-panel" id="contactPanel">
+    <div class="page-panel" id="contactPanel" data-page="contact">
       <h2 class="page-title">Contact Us</h2>
       <p class="page-text">Send a message by steering the cursor through this dark shore. When the headlights find the form, the connection is made. Email: hello@portfolio-drive.example</p>
       <button class="button" data-action="back">Return to hub</button>
@@ -462,6 +551,7 @@
   </div>
 
   <script>
+    const sceneContainer = document.querySelector('.scene-container');
     const manCursor = document.getElementById('manCursor');
     const carCursor = document.getElementById('carCursor');
     const world = document.getElementById('world');
@@ -474,6 +564,9 @@
       work: document.getElementById('workPanel'),
       contact: document.getElementById('contactPanel')
     };
+    const workCards = Array.from(document.querySelectorAll('#workPanel .work-card'));
+    let currentFocusTarget = null;
+    let lastHeading = 0;
 
     const islands = Array.from(document.querySelectorAll('.island'));
     const islandInfo = islands.map((element) => ({
@@ -508,6 +601,11 @@
 
     function setMode(mode) {
       activePage = mode;
+      sceneContainer.classList.remove('mode-about', 'mode-work', 'mode-contact');
+      if (mode !== 'hub') {
+        sceneContainer.classList.add(`mode-${mode}`);
+      }
+
       if (mode === 'hub') {
         manCursor.style.display = 'block';
         carCursor.style.display = 'none';
@@ -549,7 +647,12 @@
       player.x = Math.min(94, Math.max(6, player.x + player.velocityX * delta * 2.2));
       player.y = Math.min(94, Math.max(6, player.y + player.velocityY * delta * 2.2));
 
-      player.heading = Math.atan2(player.velocityY, player.velocityX);
+      if (Math.abs(player.velocityX) > 0.002 || Math.abs(player.velocityY) > 0.002) {
+        player.heading = Math.atan2(player.velocityY, player.velocityX);
+        lastHeading = player.heading;
+      } else {
+        player.heading = lastHeading;
+      }
       const degrees = player.heading * (180 / Math.PI);
       const rotation = degrees + 90;
 
@@ -564,6 +667,7 @@
 
       updateIslandHighlight();
       updateLighting();
+      updateSpatialFocus();
     }
 
     function updateIslandHighlight() {
@@ -623,11 +727,69 @@
       }
     }
 
+    function getBeamAlignment(targetX, targetY) {
+      const playerX = window.innerWidth * (player.x / 100);
+      const playerY = window.innerHeight * (player.y / 100);
+      const dx = targetX - playerX;
+      const dy = targetY - playerY;
+      const length = Math.hypot(dx, dy) || 1;
+      const normalizedTargetX = dx / length;
+      const normalizedTargetY = dy / length;
+      const directionX = Math.cos(player.heading);
+      const directionY = Math.sin(player.heading);
+      return normalizedTargetX * directionX + normalizedTargetY * directionY;
+    }
+
+    function updateSpatialFocus() {
+      if (activePage === 'hub') {
+        workCards.forEach((card) => card.classList.remove('lit'));
+        currentFocusTarget = null;
+        document.querySelectorAll('.page-panel').forEach((panel) => panel.classList.remove('lit'));
+        return;
+      }
+
+      const panel = pagePanels[activePage];
+      if (panel) {
+        const panelRect = panel.getBoundingClientRect();
+        const panelCenterX = panelRect.left + panelRect.width / 2;
+        const panelCenterY = panelRect.top + panelRect.height / 2;
+        const aimScore = getBeamAlignment(panelCenterX, panelCenterY);
+        panel.classList.toggle('lit', aimScore > 0.82);
+      }
+
+      if (activePage === 'work') {
+        let bestCard = null;
+        let bestScore = -1;
+        workCards.forEach((card) => {
+          const cardRect = card.getBoundingClientRect();
+          const cardCenterX = cardRect.left + cardRect.width / 2;
+          const cardCenterY = cardRect.top + cardRect.height / 2;
+          const aimScore = getBeamAlignment(cardCenterX, cardCenterY);
+          const distance = Math.hypot(cardCenterX - window.innerWidth * (player.x / 100), cardCenterY - window.innerHeight * (player.y / 100));
+          const score = aimScore - Math.min(0.9, distance / 320);
+          if (score > bestScore) {
+            bestScore = score;
+            bestCard = card;
+          }
+        });
+
+        workCards.forEach((card) => {
+          const isFocused = card === bestCard && bestScore > 0.4;
+          card.classList.toggle('lit', isFocused);
+          if (isFocused) {
+            currentFocusTarget = card;
+            statusDisplay.textContent = `Headlights locked onto ${card.querySelector('h3').textContent}`;
+          }
+        });
+      }
+    }
+
     function enterSelectedIsland() {
       if (!targetIsland || activePage !== 'hub') {
         return;
       }
       setMode(targetIsland.id);
+      statusDisplay.textContent = `Entering ${targetIsland.id} mode. Align headlights to reveal the page.`;
     }
 
     function returnToHub() {
