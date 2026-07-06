@@ -3,106 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dream Factory | Immersive English Experience</title>
+    <title>Dream Factory | Interactive Journey</title>
     <meta
       name="description"
-      content="A clean, immersive English landing page inspired by a cinematic digital experience."
+      content="An immersive, keyboard-driven website experience with 3D-style destination cards and illuminated scene pages."
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-shell">
-      <header class="topbar">
-        <a class="brand" href="#home">Dream Factory</a>
-        <nav class="topnav" aria-label="Primary navigation">
-          <a href="#about">About</a>
-          <a href="#work">Work</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </header>
+    <div class="experience" id="experience">
+      <p class="hud" id="hud">Use the arrow keys to ride between destinations. Press Enter to enter.</p>
 
-      <main id="home">
-        <section class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">English landing experience</p>
-            <h1>We shape bold ideas into immersive digital stories.</h1>
-            <p class="lead">
-              We design elegant online journeys for culture, fashion, and forward-thinking brands.
-              Every detail is crafted to feel cinematic, refined, and memorable.
-            </p>
-            <div class="hero-actions">
-              <a class="button primary" href="#contact">Start a conversation</a>
-              <a class="button secondary" href="#work">Explore our work</a>
-            </div>
+      <section class="scene home-scene" id="homeScene">
+        <div class="sky"></div>
+        <div class="road"></div>
+        <div class="road-markers">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="title-panel">
+          <p class="eyebrow">Dream Factory</p>
+          <h1>Ride through a cinematic digital world.</h1>
+          <p>
+            Choose a destination, steer with the keyboard, and step into a new scene.
+          </p>
+        </div>
+
+        <div class="option-row" aria-label="Destination options">
+          <button class="option-card is-active" data-index="0">
+            <span>01</span>
+            <strong>About Us</strong>
+          </button>
+          <button class="option-card" data-index="1">
+            <span>02</span>
+            <strong>Contact</strong>
+          </button>
+        </div>
+      </section>
+
+      <section class="scene page-scene" id="pageScene" aria-hidden="true">
+        <div class="page-backdrop"></div>
+
+        <div class="car-scene">
+          <div class="car-body">
+            <div class="car-window"></div>
+            <div class="car-light light-left"></div>
+            <div class="car-light light-right"></div>
           </div>
+          <div class="beam" id="beam"></div>
+        </div>
 
-          <div class="hero-card" id="explore-card" aria-label="Interactive showcase">
-            <p class="card-label">Drag to explore</p>
-            <div class="card-surface">
-              <div class="glow"></div>
-              <div class="orbit orbit-one"></div>
-              <div class="orbit orbit-two"></div>
-              <div class="core"></div>
-            </div>
-            <p class="card-foot">
-              A fluid mix of motion, storytelling, and elegant interaction.
-            </p>
-          </div>
-        </section>
-
-        <section class="info-grid" id="about">
-          <article>
-            <h2>Creative direction</h2>
-            <p>
-              We bring strategic clarity to each concept and transform it into a luminous digital presence.
-            </p>
-          </article>
-          <article>
-            <h2>Visual storytelling</h2>
-            <p>
-              Rich textures, thoughtful pacing, and immersive layouts make every experience feel alive.
-            </p>
-          </article>
-          <article>
-            <h2>Thoughtful launch</h2>
-            <p>
-              From concept to build, we ensure the final experience is seamless across every device.
-            </p>
-          </article>
-        </section>
-
-        <section class="story-section" id="work">
-          <div class="story-copy">
-            <p class="eyebrow">What we create</p>
-            <h2>A digital home for ideas that deserve attention.</h2>
-            <p>
-              Our projects balance artistic expression with clear purpose, creating spaces that feel
-              immersive, intuitive, and distinctly human.
-            </p>
-          </div>
-
-          <div class="story-list" aria-label="Project highlights">
-            <div>
-              <span>01</span>
-              <h3>Immersive launch pages</h3>
-            </div>
-            <div>
-              <span>02</span>
-              <h3>Editorial experiences</h3>
-            </div>
-            <div>
-              <span>03</span>
-              <h3>Motion-led storytelling</h3>
-            </div>
-          </div>
-        </section>
-
-        <section class="cta-panel" id="contact">
-          <h2>Ready to create something unforgettable?</h2>
-          <p>Let’s build a memorable experience that feels striking, clear, and unmistakably yours.</p>
-          <a class="button primary" href="mailto:hello@dreamfactory.com">hello@dreamfactory.com</a>
-        </section>
-      </main>
+        <div class="content-panel" id="contentPanel">
+          <p class="eyebrow" id="pageEyebrow">Destination</p>
+          <h2 id="pageTitle">About Us</h2>
+          <p id="pageText">
+            We design immersive digital journeys that feel like stepping into a living story.
+          </p>
+          <p class="hint">Use the arrow keys to switch scenes. Press Enter to return home.</p>
+        </div>
+      </section>
     </div>
 
     <script src="script.js"></script>
