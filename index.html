@@ -1,880 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Portfolio Drive</title>
-  <style>
-    :root {
-      --bg: #02030c;
-      --sky: #0a1120;
-      --accent: #00d2ff;
-      --accent-2: #ff4e6d;
-      --surface: #121b30;
-      --text: #eef5ff;
-      --text-muted: #7e94b2;
-      --light: rgba(0, 210, 255, 0.16);
-      --shadow: rgba(0, 0, 0, 0.45);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dream Factory | Immersive English Experience</title>
+    <meta
+      name="description"
+      content="A clean, immersive English landing page inspired by a cinematic digital experience."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#home">Dream Factory</a>
+        <nav class="topnav" aria-label="Primary navigation">
+          <a href="#about">About</a>
+          <a href="#work">Work</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </header>
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      overflow: hidden;
-      background: radial-gradient(circle at 20% 15%, rgba(0, 210, 255, 0.08), transparent 25%),
-                  linear-gradient(180deg, #061022 0%, var(--bg) 70%);
-      color: var(--text);
-      font-family: "Inter", "Segoe UI", sans-serif;
-      cursor: none;
-    }
-
-    .scene-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      perspective: 1400px;
-      overflow: hidden;
-      transition: filter 0.8s ease;
-    }
-
-    .world {
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-      transform: translateZ(-200px) rotateX(18deg);
-      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .scene-container.mode-about .world {
-      transform: translateZ(-120px) rotateX(16deg) translateY(-30px) rotateY(-10deg);
-    }
-
-    .scene-container.mode-work .world {
-      transform: translateZ(-120px) rotateX(16deg) translateY(-36px) rotateY(0deg);
-    }
-
-    .scene-container.mode-contact .world {
-      transform: translateZ(-120px) rotateX(16deg) translateY(-30px) rotateY(10deg);
-    }
-
-    .ground {
-      position: absolute;
-      left: 50%;
-      top: 60%;
-      width: 200vw;
-      height: 150vh;
-      transform: translateX(-50%) rotateX(70deg);
-      background: linear-gradient(180deg, rgba(14, 23, 46, 0.9), rgba(8, 12, 20, 1));
-      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.5);
-    }
-
-    .island {
-      position: absolute;
-      width: 260px;
-      height: 180px;
-      transform-style: preserve-3d;
-      perspective: 1200px;
-      cursor: pointer;
-    }
-
-    .island-base,
-    .island-top {
-      position: absolute;
-      inset: 0;
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: 0 24px 42px rgba(0, 0, 0, 0.28);
-    }
-
-    .island-base {
-      background: linear-gradient(180deg, rgba(10, 15, 32, 0.95), rgba(8, 10, 18, 1));
-      transform: translateZ(-16px) rotateX(80deg);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .island-top {
-      background: linear-gradient(135deg, rgba(2, 18, 46, 1), rgba(12, 29, 61, 0.96));
-      border: 1px solid rgba(0, 210, 255, 0.14);
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      opacity: 0.98;
-      transition: transform 0.3s ease;
-    }
-
-    .island:hover .island-top {
-      transform: translateY(-6px);
-    }
-
-    .island-label {
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      font-size: 0.78rem;
-      color: var(--accent);
-    }
-
-    .island-title {
-      margin: 0.7rem 0 0;
-      font-size: 1.3rem;
-      line-height: 1.1;
-    }
-
-    .island-desc {
-      margin: 0.9rem 0 0;
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
-
-    .hud {
-      position: absolute;
-      top: 1.2rem;
-      left: 1.2rem;
-      z-index: 10;
-      width: min(380px, calc(100vw - 2.4rem));
-      padding: 1rem 1.1rem;
-      background: rgba(7, 14, 28, 0.82);
-      border: 1px solid rgba(0, 210, 255, 0.16);
-      border-radius: 16px;
-      backdrop-filter: blur(8px);
-    }
-
-    .hud h1 {
-      margin: 0 0 0.4rem;
-      font-size: 1.3rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .hud p {
-      margin: 0.5rem 0 0;
-      max-width: 100%;
-      line-height: 1.7;
-      color: var(--text-muted);
-      font-size: 0.96rem;
-    }
-
-    .hud .hint {
-      margin-top: 0.9rem;
-      color: var(--accent);
-      font-size: 0.84rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .man-cursor,
-    .car-cursor {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      transform: translate(-50%, -50%);
-      z-index: 12;
-      pointer-events: none;
-      transition: transform 0.12s ease;
-    }
-
-    .man-cursor svg,
-    .car-cursor svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .car-cursor {
-      display: none;
-    }
-
-    .headlight {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 240px;
-      height: 240px;
-      transform: translate(-50%, -10%) rotate(0deg);
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.9;
-      background: radial-gradient(circle at 50% 20%, rgba(255, 248, 220, 0.7), transparent 45%);
-      filter: blur(2px);
-    }
-
-    .page-overlay {
-      position: absolute;
-      inset: 0;
-      display: none;
-      z-index: 9;
-      background: radial-gradient(circle at center, rgba(4, 13, 28, 0.3), rgba(2, 6, 15, 0.92) 55%);
-      pointer-events: none;
-    }
-
-    .panel {
-      position: absolute;
-      width: min(480px, calc(100vw - 3rem));
-      max-height: 72vh;
-      padding: 1.4rem;
-      background: rgba(9, 17, 32, 0.92);
-      border: 1px solid rgba(0, 210, 255, 0.15);
-      border-radius: 24px;
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
-      transform: translate(-50%, -50%);
-      overflow: hidden;
-      display: grid;
-      gap: 1rem;
-      pointer-events: auto;
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: 1.45rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .panel p {
-      margin: 0;
-      line-height: 1.8;
-      color: var(--text-muted);
-      font-size: 0.98rem;
-    }
-
-    .panel .button {
-      align-self: start;
-      width: fit-content;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(12, 20, 36, 0.9);
-      color: var(--text);
-      padding: 0.7rem 1rem;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: transform 0.18s ease, background 0.18s ease;
-    }
-
-    .panel .button:hover {
-      transform: translateY(-2px);
-      background: rgba(0, 210, 255, 0.12);
-    }
-
-    .page-panel {
-      position: absolute;
-      width: min(460px, calc(100vw - 3rem));
-      max-height: 72vh;
-      padding: 1.4rem;
-      background: rgba(9, 17, 32, 0.92);
-      border: 1px solid rgba(0, 210, 255, 0.15);
-      border-radius: 24px;
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
-      transform-style: preserve-3d;
-      transform-origin: center center;
-      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease, filter 0.65s ease, box-shadow 0.65s ease;
-      opacity: 0;
-      pointer-events: none;
-      filter: blur(1px);
-      z-index: 11;
-    }
-
-    .page-panel.active {
-      opacity: 1;
-      pointer-events: auto;
-      filter: blur(0);
-    }
-
-    .page-panel.lit {
-      border-color: rgba(0, 210, 255, 0.3);
-      box-shadow: 0 28px 72px rgba(0, 210, 255, 0.26);
-    }
-
-    .page-panel[data-page="about"] {
-      left: 22%;
-      top: 60%;
-      transform: translate(-50%, -50%) translateZ(60px) rotateX(12deg) rotateY(-18deg) scale(0.86);
-    }
-
-    .page-panel[data-page="work"] {
-      left: 50%;
-      top: 34%;
-      transform: translate(-50%, -50%) translateZ(100px) rotateX(14deg) scale(0.94);
-    }
-
-    .page-panel[data-page="contact"] {
-      left: 78%;
-      top: 60%;
-      transform: translate(-50%, -50%) translateZ(44px) rotateX(12deg) rotateY(18deg) scale(0.86);
-    }
-
-    .scene-container.mode-about .page-panel[data-page="about"],
-    .scene-container.mode-work .page-panel[data-page="work"],
-    .scene-container.mode-contact .page-panel[data-page="contact"] {
-      left: 50%;
-      top: 48%;
-      transform: translate(-50%, -50%) translateZ(0px) rotateX(8deg) rotateY(0deg) scale(1.04);
-    }
-
-    .scene-container.mode-about .page-panel:not([data-page="about"]),
-    .scene-container.mode-work .page-panel:not([data-page="work"]),
-    .scene-container.mode-contact .page-panel:not([data-page="contact"]) {
-      opacity: 0.18;
-      pointer-events: none;
-      transform: translate(-50%, -50%) translateZ(-140px) rotateX(14deg) scale(0.72);
-    }
-
-    .page-panel .page-title {
-      margin: 0 0 0.8rem;
-      font-size: 1.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-    }
-
-    .page-panel .page-text {
-      margin: 0;
-      line-height: 1.75;
-      color: var(--text-muted);
-      max-width: 42rem;
-      font-size: 1rem;
-    }
-
-    .page-panel .grid {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .work-card {
-      padding: 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(8, 16, 34, 0.88);
-      border-radius: 18px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    }
-
-    .work-card h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .work-card p {
-      margin: 0;
-      font-size: 0.94rem;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
-
-    .work-card.small {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .work-card .work-icon {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      display: grid;
-      place-items: center;
-      font-size: 1.8rem;
-      color: var(--accent);
-    }
-
-    .work-card.ghost .work-icon {
-      background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 50%);
-      color: #ff4e6d;
-    }
-
-    .work-card.glitch .work-icon {
-      background: linear-gradient(135deg, rgba(14, 18, 35, 0.98), rgba(0, 210, 255, 0.08));
-      color: #95fffa;
-    }
-
-    .work-card.red .work-icon {
-      background: linear-gradient(135deg, rgba(160, 18, 30, 0.96), rgba(72, 2, 16, 0.96));
-      color: #ffb0ab;
-    }
-
-    .work-card.spectral .work-icon {
-      background: linear-gradient(135deg, rgba(16, 25, 46, 0.96), rgba(42, 58, 93, 0.96));
-      color: #c8c6ff;
-    }
-
-    .work-card.lit {
-      transform: translateY(-4px);
-      border-color: rgba(0, 210, 255, 0.24);
-      background: rgba(0, 210, 255, 0.08);
-    }
-
-    .work-card .detail {
-      margin-top: 0.8rem;
-      opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity 0.36s ease, max-height 0.36s ease;
-      color: #d8f7ff;
-      font-size: 0.89rem;
-      line-height: 1.6;
-    }
-
-    .work-card.lit .detail {
-      opacity: 1;
-      max-height: 4rem;
-    }
-
-    .fade-dark {
-      opacity: 0.45;
-    }
-
-    @media (max-width: 900px) {
-      .scene-container {
-        perspective: 900px;
-      }
-
-      .hud {
-        left: 50%;
-        transform: translateX(-50%);
-      }
-
-      .island {
-        width: 220px;
-        height: 160px;
-      }
-
-      .page-panel {
-        width: min(92vw, 420px);
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="scene-container">
-    <div class="world" id="world">
-      <div class="ground"></div>
-
-      <div class="island" data-page="about" style="left: 22%; top: 46%; transform: translate3d(-50%, -50%, 0px);">
-        <div class="island-base"></div>
-        <div class="island-top">
-          <div>
-            <div class="island-label">Island</div>
-            <h2 class="island-title">About Us</h2>
+      <main id="home">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">English landing experience</p>
+            <h1>We shape bold ideas into immersive digital stories.</h1>
+            <p class="lead">
+              We design elegant online journeys for culture, fashion, and forward-thinking brands.
+              Every detail is crafted to feel cinematic, refined, and memorable.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#contact">Start a conversation</a>
+              <a class="button secondary" href="#work">Explore our work</a>
+            </div>
           </div>
-          <p class="island-desc">A hidden base where the journey begins and the story is revealed.</p>
-        </div>
-      </div>
 
-      <div class="island" data-page="work" style="left: 50%; top: 28%; transform: translate3d(-50%, -50%, 70px);">
-        <div class="island-base"></div>
-        <div class="island-top">
-          <div>
-            <div class="island-label">Island</div>
-            <h2 class="island-title">Our Work</h2>
+          <div class="hero-card" id="explore-card" aria-label="Interactive showcase">
+            <p class="card-label">Drag to explore</p>
+            <div class="card-surface">
+              <div class="glow"></div>
+              <div class="orbit orbit-one"></div>
+              <div class="orbit orbit-two"></div>
+              <div class="core"></div>
+            </div>
+            <p class="card-foot">
+              A fluid mix of motion, storytelling, and elegant interaction.
+            </p>
           </div>
-          <p class="island-desc">A gallery of strange faces, pixel ghosts, and vivid visions.</p>
-        </div>
-      </div>
+        </section>
 
-      <div class="island" data-page="contact" style="left: 78%; top: 52%; transform: translate3d(-50%, -50%, -20px);">
-        <div class="island-base"></div>
-        <div class="island-top">
-          <div>
-            <div class="island-label">Island</div>
-            <h2 class="island-title">Contact</h2>
+        <section class="info-grid" id="about">
+          <article>
+            <h2>Creative direction</h2>
+            <p>
+              We bring strategic clarity to each concept and transform it into a luminous digital presence.
+            </p>
+          </article>
+          <article>
+            <h2>Visual storytelling</h2>
+            <p>
+              Rich textures, thoughtful pacing, and immersive layouts make every experience feel alive.
+            </p>
+          </article>
+          <article>
+            <h2>Thoughtful launch</h2>
+            <p>
+              From concept to build, we ensure the final experience is seamless across every device.
+            </p>
+          </article>
+        </section>
+
+        <section class="story-section" id="work">
+          <div class="story-copy">
+            <p class="eyebrow">What we create</p>
+            <h2>A digital home for ideas that deserve attention.</h2>
+            <p>
+              Our projects balance artistic expression with clear purpose, creating spaces that feel
+              immersive, intuitive, and distinctly human.
+            </p>
           </div>
-          <p class="island-desc">A quiet shore where messages come through the headlights.</p>
-        </div>
-      </div>
+
+          <div class="story-list" aria-label="Project highlights">
+            <div>
+              <span>01</span>
+              <h3>Immersive launch pages</h3>
+            </div>
+            <div>
+              <span>02</span>
+              <h3>Editorial experiences</h3>
+            </div>
+            <div>
+              <span>03</span>
+              <h3>Motion-led storytelling</h3>
+            </div>
+          </div>
+        </section>
+
+        <section class="cta-panel" id="contact">
+          <h2>Ready to create something unforgettable?</h2>
+          <p>Let’s build a memorable experience that feels striking, clear, and unmistakably yours.</p>
+          <a class="button primary" href="mailto:hello@dreamfactory.com">hello@dreamfactory.com</a>
+        </section>
+      </main>
     </div>
 
-    <div class="hud">
-      <h1>Portfolio Drive</h1>
-      <p>Move the man with arrow keys or WASD to select one of the floating islands. Press Enter or Space when you are close to enter the world.</p>
-      <p class="hint">Tip: each island becomes a 3D page once you arrive.</p>
-      <div class="hint" id="status">Starting in hub mode</div>
-    </div>
-
-    <div class="man-cursor" id="manCursor">
-      <svg viewBox="0 0 120 120" aria-hidden="true">
-        <circle cx="60" cy="28" r="18" fill="#b4c9ff" />
-        <path d="M40 65c0-12 18-22 20-22s20 10 20 22v24H40V65Z" fill="#d7e2ff" />
-        <path d="M42 90c4 4 14 7 18 7s14-3 18-7" stroke="#8fa7ca" stroke-width="4" stroke-linecap="round" />
-      </svg>
-    </div>
-
-    <div class="car-cursor" id="carCursor">
-      <div class="headlight" id="headlight"></div>
-      <svg viewBox="0 0 140 80" aria-hidden="true">
-        <rect x="18" y="20" width="104" height="32" rx="14" fill="#ff4e6d" />
-        <rect x="34" y="10" width="72" height="18" rx="9" fill="#00d2ff" />
-        <circle cx="38" cy="58" r="9" fill="#0a1220" />
-        <circle cx="102" cy="58" r="9" fill="#0a1220" />
-      </svg>
-    </div>
-
-    <div class="page-panel" id="aboutPanel" data-page="about">
-      <h2 class="page-title">About Us</h2>
-      <p class="page-text">This is a portfolio built as an exploration game. Each island is a chapter in the story: who we are, what we make, and how to reach us. The experience is meant to be discovered, not simply read.</p>
-      <button class="button" data-action="back">Return to hub</button>
-    </div>
-
-    <div class="page-panel" id="workPanel" data-page="work">
-      <h2 class="page-title">Our Work</h2>
-      <p class="page-text">These works are rendered as interactive through the cursor. Reach each symbol to reveal a different artwork style.</p>
-      <div class="grid">
-        <div class="work-card glitch" data-key="pixel">
-          <div class="work-icon">▓▓</div>
-          <h3>Pixel Distortion</h3>
-          <p>A glitchy portal for the pixelated work. The car must align to this symbol to make the image visible.</p>
-          <div class="detail">The beam unlocks layered noise and shimmer as the symbol is approached.</div>
-        </div>
-        <div class="work-card red" data-key="red">
-          <div class="work-icon">⥢⥡</div>
-          <h3>Red Hallucination</h3>
-          <p>An intense red zone that appears like a fever dream. The lighting reveals the hidden texture at close range.</p>
-          <div class="detail">Close the beam and the red surface pulses with a hidden pattern.</div>
-        </div>
-        <div class="work-card spectral" data-key="spiritual">
-          <div class="work-icon">✧✦</div>
-          <h3>Spiritual Letters</h3>
-          <p>Floating text and symbols drift in the dark. Only by shining the headlights into the letters does the meaning surface.</p>
-          <div class="detail">The light makes the language glow and the letters lift from the page.</div>
-        </div>
-      </div>
-      <button class="button" data-action="back">Return to hub</button>
-    </div>
-
-    <div class="page-panel" id="contactPanel" data-page="contact">
-      <h2 class="page-title">Contact Us</h2>
-      <p class="page-text">Send a message by steering the cursor through this dark shore. When the headlights find the form, the connection is made. Email: hello@portfolio-drive.example</p>
-      <button class="button" data-action="back">Return to hub</button>
-    </div>
-  </div>
-
-  <script>
-    const sceneContainer = document.querySelector('.scene-container');
-    const manCursor = document.getElementById('manCursor');
-    const carCursor = document.getElementById('carCursor');
-    const world = document.getElementById('world');
-    const statusDisplay = document.getElementById('status');
-    const headlight = document.getElementById('headlight');
-
-    const pagePanels = {
-      hub: null,
-      about: document.getElementById('aboutPanel'),
-      work: document.getElementById('workPanel'),
-      contact: document.getElementById('contactPanel')
-    };
-    const workCards = Array.from(document.querySelectorAll('#workPanel .work-card'));
-    let currentFocusTarget = null;
-    let lastHeading = 0;
-
-    const islands = Array.from(document.querySelectorAll('.island'));
-    const islandInfo = islands.map((element) => ({
-      id: element.dataset.page,
-      element
-    }));
-
-    const player = {
-      x: 46,
-      y: 62,
-      velocityX: 0,
-      velocityY: 0,
-      speed: 0.16,
-      heading: 0
-    };
-
-    const inputState = {
-      ArrowUp: false,
-      ArrowDown: false,
-      ArrowLeft: false,
-      ArrowRight: false,
-      w: false,
-      a: false,
-      s: false,
-      d: false
-    };
-
-    let activePage = 'hub';
-    let targetIsland = null;
-    let animationFrame = null;
-    let lastFrameTime = performance.now();
-
-    function setMode(mode) {
-      activePage = mode;
-      sceneContainer.classList.remove('mode-about', 'mode-work', 'mode-contact');
-      if (mode !== 'hub') {
-        sceneContainer.classList.add(`mode-${mode}`);
-      }
-
-      if (mode === 'hub') {
-        manCursor.style.display = 'block';
-        carCursor.style.display = 'none';
-        statusDisplay.textContent = 'Explore the islands to choose a page';
-        hideAllPanels();
-      } else {
-        manCursor.style.display = 'none';
-        carCursor.style.display = 'block';
-        statusDisplay.textContent = `Driving into ${mode}`;
-        showPanelFor(mode);
-      }
-    }
-
-    function hideAllPanels() {
-      Object.values(pagePanels).forEach((panel) => {
-        if (panel) {
-          panel.classList.remove('active');
-        }
-      });
-    }
-
-    function showPanelFor(page) {
-      hideAllPanels();
-      const panel = pagePanels[page];
-      if (panel) {
-        panel.classList.add('active');
-      }
-    }
-
-    function updatePosition(delta) {
-      const moveX = (inputState.d || inputState.ArrowRight ? 1 : 0) - (inputState.a || inputState.ArrowLeft ? 1 : 0);
-      const moveY = (inputState.s || inputState.ArrowDown ? 1 : 0) - (inputState.w || inputState.ArrowUp ? 1 : 0);
-
-      player.velocityX += moveX * player.speed * delta;
-      player.velocityY += moveY * player.speed * delta;
-      player.velocityX *= 0.82;
-      player.velocityY *= 0.82;
-
-      player.x = Math.min(94, Math.max(6, player.x + player.velocityX * delta * 2.2));
-      player.y = Math.min(94, Math.max(6, player.y + player.velocityY * delta * 2.2));
-
-      if (Math.abs(player.velocityX) > 0.002 || Math.abs(player.velocityY) > 0.002) {
-        player.heading = Math.atan2(player.velocityY, player.velocityX);
-        lastHeading = player.heading;
-      } else {
-        player.heading = lastHeading;
-      }
-      const degrees = player.heading * (180 / Math.PI);
-      const rotation = degrees + 90;
-
-      const cursorElement = activePage === 'hub' ? manCursor : carCursor;
-      cursorElement.style.left = `${player.x}%`;
-      cursorElement.style.top = `${player.y}%`;
-      cursorElement.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-
-      if (activePage !== 'hub') {
-        headlight.style.transform = `translate(-50%, -30%) rotate(${rotation}deg)`;
-      }
-
-      updateIslandHighlight();
-      updateLighting();
-      updateSpatialFocus();
-    }
-
-    function updateIslandHighlight() {
-      const nearestIsland = getNearestIsland();
-      if (!nearestIsland) {
-        targetIsland = null;
-        statusDisplay.textContent = 'Navigate using keys. Close an island to enter it.';
-        return;
-      }
-
-      const distance = getDistanceToElement(nearestIsland.element);
-      targetIsland = distance < 180 ? nearestIsland : null;
-
-      if (targetIsland && activePage === 'hub') {
-        statusDisplay.textContent = `Press Enter or Space to board ${targetIsland.id}`;
-      } else if (activePage === 'hub') {
-        statusDisplay.textContent = 'Move closer to an island to select it.';
-      }
-    }
-
-    function getNearestIsland() {
-      let nearest = null;
-      let closest = Infinity;
-      islands.forEach((island) => {
-        const distance = getDistanceToElement(island);
-        if (distance < closest) {
-          closest = distance;
-          nearest = island;
-        }
-      });
-      return nearest;
-    }
-
-    function getDistanceToElement(element) {
-      const rect = element.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const playerX = window.innerWidth * (player.x / 100);
-      const playerY = window.innerHeight * (player.y / 100);
-      return Math.hypot(centerX - playerX, centerY - playerY);
-    }
-
-    function updateLighting() {
-      if (activePage !== 'hub') {
-        const pagePanel = pagePanels[activePage];
-        if (!pagePanel) {
-          return;
-        }
-        const panelRect = pagePanel.getBoundingClientRect();
-        const playerX = window.innerWidth * (player.x / 100);
-        const playerY = window.innerHeight * (player.y / 100);
-        const panelCenterX = panelRect.left + panelRect.width / 2;
-        const panelCenterY = panelRect.top + panelRect.height / 2;
-        const distance = Math.hypot(panelCenterX - playerX, panelCenterY - playerY);
-        const visibility = Math.max(0.15, Math.min(1, 1 - distance / 500));
-        pagePanel.style.opacity = visibility;
-      }
-    }
-
-    function getBeamAlignment(targetX, targetY) {
-      const playerX = window.innerWidth * (player.x / 100);
-      const playerY = window.innerHeight * (player.y / 100);
-      const dx = targetX - playerX;
-      const dy = targetY - playerY;
-      const length = Math.hypot(dx, dy) || 1;
-      const normalizedTargetX = dx / length;
-      const normalizedTargetY = dy / length;
-      const directionX = Math.cos(player.heading);
-      const directionY = Math.sin(player.heading);
-      return normalizedTargetX * directionX + normalizedTargetY * directionY;
-    }
-
-    function updateSpatialFocus() {
-      if (activePage === 'hub') {
-        workCards.forEach((card) => card.classList.remove('lit'));
-        currentFocusTarget = null;
-        document.querySelectorAll('.page-panel').forEach((panel) => panel.classList.remove('lit'));
-        return;
-      }
-
-      const panel = pagePanels[activePage];
-      if (panel) {
-        const panelRect = panel.getBoundingClientRect();
-        const panelCenterX = panelRect.left + panelRect.width / 2;
-        const panelCenterY = panelRect.top + panelRect.height / 2;
-        const aimScore = getBeamAlignment(panelCenterX, panelCenterY);
-        panel.classList.toggle('lit', aimScore > 0.82);
-      }
-
-      if (activePage === 'work') {
-        let bestCard = null;
-        let bestScore = -1;
-        workCards.forEach((card) => {
-          const cardRect = card.getBoundingClientRect();
-          const cardCenterX = cardRect.left + cardRect.width / 2;
-          const cardCenterY = cardRect.top + cardRect.height / 2;
-          const aimScore = getBeamAlignment(cardCenterX, cardCenterY);
-          const distance = Math.hypot(cardCenterX - window.innerWidth * (player.x / 100), cardCenterY - window.innerHeight * (player.y / 100));
-          const score = aimScore - Math.min(0.9, distance / 320);
-          if (score > bestScore) {
-            bestScore = score;
-            bestCard = card;
-          }
-        });
-
-        workCards.forEach((card) => {
-          const isFocused = card === bestCard && bestScore > 0.4;
-          card.classList.toggle('lit', isFocused);
-          if (isFocused) {
-            currentFocusTarget = card;
-            statusDisplay.textContent = `Headlights locked onto ${card.querySelector('h3').textContent}`;
-          }
-        });
-      }
-    }
-
-    function enterSelectedIsland() {
-      if (!targetIsland || activePage !== 'hub') {
-        return;
-      }
-      setMode(targetIsland.id);
-      statusDisplay.textContent = `Entering ${targetIsland.id} mode. Align headlights to reveal the page.`;
-    }
-
-    function returnToHub() {
-      setMode('hub');
-      player.x = 46;
-      player.y = 62;
-      player.velocityX = 0;
-      player.velocityY = 0;
-    }
-
-    function onKeyDown(event) {
-      if (inputState[event.key] !== undefined) {
-        inputState[event.key] = true;
-      }
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        if (activePage === 'hub') {
-          enterSelectedIsland();
-        }
-      }
-    }
-
-    function onKeyUp(event) {
-      if (inputState[event.key] !== undefined) {
-        inputState[event.key] = false;
-      }
-    }
-
-    function pollGamepad() {
-      const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-      const gamepad = Array.from(gamepads).find((pad) => pad && pad.connected);
-      if (!gamepad) {
-        return;
-      }
-      const [horizontal, vertical] = [gamepad.axes[0] || 0, gamepad.axes[1] || 0];
-      if (Math.abs(horizontal) > 0.18) {
-        player.velocityX += horizontal * 0.01;
-      }
-      if (Math.abs(vertical) > 0.18) {
-        player.velocityY += vertical * 0.01;
-      }
-      if (gamepad.buttons[0]?.pressed) {
-        enterSelectedIsland();
-      }
-    }
-
-    function animate() {
-      const now = performance.now();
-      const delta = Math.min(1.5, (now - lastFrameTime) / 16.67);
-      lastFrameTime = now;
-      updatePosition(delta);
-      pollGamepad();
-      animationFrame = requestAnimationFrame(animate);
-    }
-
-    function bindPanelButtons() {
-      Object.values(pagePanels).forEach((panel) => {
-        if (!panel) {
-          return;
-        }
-        const backButton = panel.querySelector('[data-action="back"]');
-        if (backButton) {
-          backButton.addEventListener('click', returnToHub);
-        }
-      });
-    }
-
-    islands.forEach((island) => {
-      island.addEventListener('click', () => {
-        if (activePage === 'hub') {
-          targetIsland = island;
-          enterSelectedIsland();
-        }
-      });
-    });
-
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
-    window.addEventListener('gamepadconnected', () => {
-      statusDisplay.textContent = 'Gamepad connected';
-    });
-
-    bindPanelButtons();
-    setMode('hub');
-    animate();
-  </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
