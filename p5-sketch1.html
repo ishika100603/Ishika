@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>2D Sketch 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: sans-serif;
+        }
+
+        header {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>2D SKETCH 1</h1>
+        <a href="index.html">← HOME</a>
+    </header>
+
+    <script>
+        function setup() {
+            createCanvas(800, 600);
+            noLoop();
+        }
+
+        function draw() {
+            background(10, 8, 20);
+
+            // Gradient sky
+            noStroke();
+            for (let y = 0; y < 400; y++) {
+                let t = y / 400;
+                let r = lerp(15, 140, t);
+                let g = lerp(10, 80, t);
+                let b = lerp(35, 60, t);
+                fill(r, g, b);
+                rect(0, y, width, 1);
+            }
+
+            // Melting clock
+            push();
+            translate(600, 300);
+            fill(200, 170, 90);
+            stroke(70, 55, 25);
+            strokeWeight(3);
+            beginShape();
+            vertex(-70, -70);
+            bezierVertex(50, -90, 100, -30, 70, 40);
+            bezierVertex(50, 100, -10, 160, -60, 130);
+            bezierVertex(-110, 100, -100, 20, -70, -70);
+            endShape(CLOSE);
+            pop();
+
+            // Melting portrait blob
+            push();
+            translate(220, 260);
+            fill(50, 75, 120);
+            stroke(15, 25, 50);
+            strokeWeight(4);
+            beginShape();
+            vertex(-100, -130);
+            bezierVertex(30, -160, 120, -90, 100, 10);
+            bezierVertex(85, 110, -20, 160, -110, 100);
+            bezierVertex(-170, 55, -145, -85, -100, -130);
+            endShape(CLOSE);
+            noStroke();
+            fill(220, 205, 175);
+            ellipse(-15, -40, 45, 45);
+            fill(90, 65, 45);
+            rect(-45, 5, 65, 95, 12);
+            pop();
+
+            // Floating orbs with shadows
+            for (let i = 0; i < 5; i++) {
+                push();
+                let ex = 60 + i * 150;
+                let ey = 500;
+                fill(0, 0, 0, 90);
+                ellipse(ex + 40, ey + 60, 70, 15);
+                fill(230, 220, 195);
+                stroke(90, 80, 60);
+                strokeWeight(2);
+                ellipse(ex, ey, 45, 65);
+                pop();
+            }
+        }
+    </script>
+</body>
+
+</html>

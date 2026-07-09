@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2D Sketch 2</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #090909;
+            color: #f2f2f2;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .page {
+            width: min(900px, 92vw);
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 16px;
+        }
+
+        a {
+            color: #8ec5ff;
+            text-decoration: none;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        a:hover {
+            color: #ffffff;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #111;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="topbar">
+            <h1 style="margin: 0; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;">2D Sketch 2</h1>
+            <a href="index.html">← Home</a>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+        <script src="sketch2.js"></script>
+    </div>
+</body>
+
+</html>
