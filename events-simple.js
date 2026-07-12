@@ -29,18 +29,27 @@
         .domain(['Modern', 'Avant-garde', 'Experimental', 'Contemporary'])
         .range(['#6b9cff', '#ff6b6b', '#ffcc66', '#9edb8d']);
   
+      const axisStyle = selection =>
+        selection
+          .selectAll('text')
+          .style('fill', '#ccc')
+          .style('font-size', '11px');
+      const axisPathStyle = selection =>
+        selection
+          .selectAll('path, line')
+          .style('stroke', '#555');
+
       const xAxis = d3.axisBottom(xScale).tickFormat(d3.format('d'));
       svg.append('g')
         .attr('transform', `translate(0, ${height})`)
         .call(xAxis)
-        .selectAll('text')
-        .style('fill', '#ccc');
-  
+        .call(axisStyle)
+        .call(axisPathStyle);
+
       svg.append('g')
         .call(d3.axisLeft(yScale))
-        .selectAll('text')
-        .style('fill', '#eee')
-        .style('font-size', '11px');
+        .call(axisStyle)
+        .call(axisPathStyle);
   
       svg.selectAll('.bar')
         .data(data)
@@ -84,5 +93,11 @@
         .style('fill', '#eee')
         .style('font-size', '14px')
         .text('Timeline of Art Movements');
+    }).catch(function() {
+      d3.select('#d3-container-1')
+        .append('p')
+        .style('color', '#ccc')
+        .style('text-align', 'center')
+        .text('Could not load timeline data. Open this site through a local server (not file://).');
     });
   })();
