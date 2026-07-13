@@ -1,16 +1,19 @@
 name,start,end,category
-Realism,1840,1880,Modern
-Impressionism,1860,1890,Avant-garde
-Post-Impressionism,1880,1905,Avant-garde
-Art Nouveau,1890,1910,Experimental
-Fauvism,1900,1910,Modern
-Cubism,1907,1920,Modern
-Expressionism,1905,1920,Avant-garde
-Dada,1916,1924,Experimental
-Surrealism,1924,1966,Experimental
-Abstract Expressionism,1940,1960,Contemporary
-Pop Art,1950,1970,Contemporary
-Minimalism,1960,1975,Contemporary
-Conceptual Art,1960,1980,Experimental
-Postmodernism,1970,1990,Modern
-Contemporary Art,1980,2024,Contemporary
+Linear Perspective,1420,1520,Renaissance
+Sfumato,1470,1550,Renaissance
+Oil Glazing,1400,1600,Renaissance
+Chiaroscuro,1500,1650,Baroque
+Tenebrism,1590,1650,Baroque
+Impasto,1600,1900,Baroque
+Alla Prima,1830,1900,Impressionist
+Broken Color,1860,1890,Impressionist
+Optical Mixing,1870,1900,Impressionist
+Pointillism,1884,1900,Post-Impressionist
+Divisionism,1885,1910,Post-Impressionist
+Expressive Brushwork,1888,1910,Post-Impressionist
+Flattened Perspective,1900,1920,Modern
+Collage/Papier Collé,1912,1930,Modern
+Automatism,1924,1950,Modern
+Action Painting,1940,1960,Contemporary
+Color Field,1945,1970,Contemporary
+Mixed Media,1960,2024,Contemporary

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Timeline</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #d8d8d6;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 36px;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    header h1 {
+      font-size: 13px;
+      letter-spacing: 4px;
+      font-weight: 500;
+      color: #111;
+    }
+
+    header a {
+      color: #111;
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+
+    #months-container {
+      width: 100vw;
+      height: 100vh;
+      cursor: grab;
+    }
+
+    #months-container:active { cursor: grabbing; }
+
+    #scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    svg { display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MONTHLY TIMELINE</h1>
+    <a href="index.html">← HOME</a>
+  </header>
+  <div id="months-container"></div>
+  <div id="scroll-hint">SCROLL TO EXPLORE</div>
+  <script src="months-timeline.js"></script>
+</body>
+</html>
