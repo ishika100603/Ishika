@@ -156,6 +156,20 @@ const GRAPH_DATA = (function () {
     addLink(processIds[i], processIds[i+1], 'leads to');
   }
   artworks.forEach(([id]) => addLink(id, 'proc-finished-artwork', 'result of'));
+  addLink('studio', 'proc-initial-inspiration', 'begins with');
+  addLink('exh-designmumbai', 'studio', 'part of');
+
+  // ensure every node has at least one link (no disconnected strays)
+  const linkedIds = new Set();
+  links.forEach(l => {
+    linkedIds.add(l.source);
+    linkedIds.add(l.target);
+  });
+  nodes.forEach(n => {
+    if (!linkedIds.has(n.id)) {
+      addLink('studio', n.id, 'related to');
+    }
+  });
 
   return { nodes, links };
 })();
