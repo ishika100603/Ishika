@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Explore Connections</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0d0709;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+  }
+  header {
+    position: fixed; top:0; left:0; right:0; z-index:20;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 18px 36px;
+    background: rgba(13,7,9,0.65);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  header h1 { font-size:13px; letter-spacing:4px; color:#f2e6e6; font-weight:500; }
+  header a { color:#f2e6e6; text-decoration:none; font-size:12px; letter-spacing:2px; }
+
+  #search-box {
+    position: fixed; top: 70px; left: 36px; z-index: 20;
+    background: rgba(30,15,20,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 8px 16px;
+    backdrop-filter: blur(8px);
+  }
+  #search-box input {
+    background: transparent; border: none; outline: none;
+    color: #f2e6e6; font-size: 12px; letter-spacing: 1px;
+    width: 180px;
+  }
+  #search-box input::placeholder { color: rgba(255,255,255,0.35); }
+
+  #filters {
+    position: fixed; top: 70px; right: 36px; z-index: 20;
+    display: flex; flex-wrap: wrap; gap: 6px; max-width: 260px;
+    justify-content: flex-end;
+  }
+  .filter-chip {
+    font-size: 10px; letter-spacing: 1px; padding: 5px 10px;
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6); cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.25s ease;
+  }
+  .filter-chip.active {
+    background: rgba(224,60,110,0.25);
+    border-color: rgba(224,60,110,0.6);
+    color: #ffd9e6;
+  }
+
+  #info-panel {
+    position: fixed; bottom: 30px; left: 36px; z-index: 20;
+    max-width: 320px;
+    background: rgba(20,10,14,0.75);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+  #info-panel.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  #info-panel .label { font-size: 14px; color: #ffd9e6; letter-spacing: 1px; margin-bottom: 6px; }
+  #info-panel .category { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+  #info-panel .desc { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.75); }
+
+  #hint {
+    position: fixed; bottom: 30px; right: 36px; z-index: 20;
+    font-size: 10px; letter-spacing: 3px; color: rgba(255,255,255,0.25);
+  }
+
+  svg { display: block; cursor: grab; }
+  svg:active { cursor: grabbing; }
+</style>
+</head>
+<body>
+<header>
+  <h1>EXPLORE CONNECTIONS</h1>
+  <a href="index.html">← HOME</a>
+</header>
+
+<div id="search-box">
+  <input id="search-input" type="text" placeholder="Search the network...">
+</div>
+
+<div id="filters"></div>
+
+<div id="info-panel">
+  <div class="category" id="panel-category"></div>
+  <div class="label" id="panel-label"></div>
+  <div class="desc" id="panel-desc"></div>
+</div>
+
+<div id="hint">SCROLL TO ZOOM · DRAG NODES · CLICK TO FOCUS</div>
+
+<div id="graph-container"></div>
+
+<script src="connections-data.js"></script>
+<script src="explore-connections.js"></script>
+</body>
+</html>
