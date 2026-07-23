@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Production Network — Shankar Nagar, Raipur</title>
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #05070d;
+    --ink: #e9e6dc;
+    --ink-dim: #8b8f9c;
+    --line: rgba(233,230,220,0.12);
+    --home: #f5c86a;
+    --origin: #ff4d3d;
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; padding:0; width:100%; height:100%; background:var(--bg); overflow:hidden; }
+  body{ font-family:'IBM Plex Mono', monospace; color:var(--ink); }
+
+  #map{ position:absolute; inset:0; }
+
+  #halo{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(circle at 50% 52%, rgba(245,240,225,0.16) 0%, rgba(245,240,225,0.07) 26%, rgba(245,240,225,0.02) 45%, transparent 62%);
+    opacity:0; transition:opacity 1.6s ease;
+  }
+  #halo.on{ opacity:1; }
+
+  /* ---- token notice ---- */
+  #token-gate{
+    position:absolute; inset:0; z-index:50;
+    background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    padding:32px;
+  }
+  #token-gate .box{
+    max-width:480px; border:1px solid var(--line); padding:28px 30px;
+    background:rgba(255,255,255,0.02);
+  }
+  #token-gate h1{
+    font-family:'Fraunces', serif; font-weight:500; font-style:italic;
+    font-size:22px; margin:0 0 14px; color:var(--ink);
+  }
+  #token-gate p{ font-size:12.5px; line-height:1.7; color:var(--ink-dim); margin:0 0 10px; }
+  #token-gate code{
+    display:block; background:rgba(255,255,255,0.05); padding:10px 12px;
+    font-size:11.5px; color:var(--home); margin:14px 0; word-break:break-all;
+  }
+  #token-gate a{ color:var(--home); }
+
+  /* ---- top overlay ---- */
+  .hud{ position:absolute; z-index:10; pointer-events:none; }
+  .hud a, .hud button{ pointer-events:all; }
+
+  #masthead{
+    top:0; left:0; right:0; padding:26px 30px 0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+  }
+  .eyebrow{
+    font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--ink-dim); margin-bottom:6px;
+  }
+  #masthead h1{
+    font-family:'Fraunces', serif; font-weight:500; font-style:italic;
+    font-size:clamp(22px, 3vw, 34px); margin:0; line-height:1.05;
+    color:var(--ink); max-width:520px;
+  }
+  #masthead h1 .accent-word{ color:var(--home); }
+  #masthead .origin-tag{
+    text-align:right; font-size:11px; color:var(--ink-dim); line-height:1.6;
+  }
+  #masthead .origin-tag b{ color:var(--origin); font-weight:500; }
+
+  /* ---- legend ---- */
+  #legend{
+    bottom:26px; left:30px;
+    background:rgba(5,7,13,0.72); backdrop-filter:blur(6px);
+    border:1px solid var(--line); padding:16px 18px 14px; width:230px;
+  }
+  #legend .lg-title{
+    font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-dim); margin-bottom:10px;
+  }
+  .lg-row{
+    display:flex; align-items:center; gap:9px; padding:5px 0;
+    cursor:pointer; font-size:12px; border-top:1px solid rgba(255,255,255,0.05);
+  }
+  .lg-row:first-of-type{ border-top:none; }
+  .lg-row:hover{ color:var(--home); }
+  .lg-dot{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .lg-name{ flex:1; }
+  .lg-count{ color:var(--ink-dim); font-variant-numeric:tabular-nums; }
+  .lg-row:hover .lg-count{ color:var(--home); }
+  #legend .lg-total{
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+    font-size:11px; color:var(--ink-dim); display:flex; justify-content:space-between;
+  }
+  #legend .lg-total b{ color:var(--ink); font-weight:500; }
+
+  /* ---- view controls ---- */
+  #view-controls{
+    bottom:26px; right:30px; display:flex; flex-direction:column; gap:8px;
+  }
+  #view-controls button{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--ink); background:rgba(5,7,13,0.72);
+    border:1px solid var(--line); padding:10px 16px; cursor:pointer;
+    backdrop-filter:blur(6px); text-align:left; transition:border-color .2s, color .2s;
+  }
+  #view-controls button:hover{ border-color:var(--home); color:var(--home); }
+  #view-controls button.active{ border-color:var(--home); color:var(--home); }
+
+  /* ---- popup ---- */
+  .mapboxgl-popup-content{
+    background:rgba(5,7,13,0.92) !important; color:var(--ink);
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    border:1px solid var(--line); border-radius:0 !important;
+    padding:10px 12px !important; box-shadow:none !important;
+  }
+  .mapboxgl-popup-tip{ display:none !important; }
+  .popup-city{ font-family:'Fraunces', serif; font-style:italic; font-size:14px; margin-bottom:3px; }
+  .popup-count{ color:var(--ink-dim); }
+
+  /* ---- pulsing production marker ---- */
+  .origin-marker{ width:18px; height:18px; position:relative; }
+  .origin-marker .core{
+    position:absolute; inset:0; margin:auto; width:8px; height:8px; border-radius:50%;
+    background:var(--origin); box-shadow:0 0 10px 2px var(--origin);
+  }
+  .origin-marker .ring{
+    position:absolute; inset:0; border-radius:50%; border:1px solid var(--origin);
+    animation: ripple 2.6s ease-out infinite;
+  }
+  .origin-marker .ring:nth-child(3){ animation-delay: 1.3s; }
+  @keyframes ripple{
+    0%{ transform:scale(0.4); opacity:0.9; }
+    100%{ transform:scale(3.6); opacity:0; }
+  }
+
+  /* ---- city dot marker ---- */
+  .dot-marker{ width:7px; height:7px; border-radius:50%; }
+
+  @media (max-width: 640px){
+    #masthead{ flex-direction:column; gap:14px; padding:20px; }
+    #masthead .origin-tag{ text-align:left; }
+    #legend{ left:20px; right:20px; width:auto; bottom:100px; }
+    #view-controls{ right:20px; bottom:26px; flex-direction:row; }
+  }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="halo"></div>
+
+<div id="masthead" class="hud">
+  <div>
+    <div class="eyebrow">Geospatial Structures — 01</div>
+    <h1>Everywhere <span class="accent-word">our</span> work<br/>has travelled</h1>
+  </div>
+  <div class="origin-tag">
+    Point of production<br/>
+    <b>Shankar Nagar, Raipur</b><br/>
+    21.2360° N, 81.6296° E
+  </div>
+</div>
+
+<div id="legend" class="hud"></div>
+
+<div id="view-controls" class="hud">
+  <button id="btn-home">↳ Focus Raipur</button>
+  <button id="btn-globe">◯ View whole globe</button>
+</div>
+
+<div id="token-gate">
+  <div class="box">
+    <h1>One step before this loads</h1>
+    <p>This page needs your own Mapbox access token — the same one your assignment brief asks you to set up (step 3, using your own Mapbox access token).</p>
+    <p>Get a free token at <a href="https://account.mapbox.com/access-tokens/" target="_blank">account.mapbox.com/access-tokens</a>, then paste it into the script near the top of this file:</p>
+    <code>const MAPBOX_TOKEN = 'YOUR_MAPBOX_ACCESS_TOKEN_HERE';</code>
+    <p>Save the file and reopen it — the map and the delivery network will render.</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1. CONFIG — drop your own Mapbox token in below
+   ========================================================= */
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiaXNoaWthYWdyYXdhbDEwIiwiYSI6ImNtcnd2Y291djA5cDAzNHE1NXJ0ajB2cGQifQ.gm1SNcfZUHO0AAixzPMScw';
+
+/* =========================================================
+   2. DATA — production origin + delivery clusters
+   ========================================================= */
+const ORIGIN = { name: 'Shankar Nagar, Raipur', coords: [81.6296, 21.2360] };
+
+// [lng, lat], count of pieces delivered, accent color, jitter radius in degrees
+const CLUSTERS = [
+  { name: 'Raipur',      center: [81.6296, 21.2500], count: 14, color: '#f5c86a', radius: 0.075, home: true },
+  { name: 'Mumbai',      center: [72.8777, 19.0760], count: 10, color: '#2dd4bf', radius: 0.05  },
+  { name: 'Kolkata',     center: [88.3639, 22.5726], count: 7,  color: '#a78bfa', radius: 0.045 },
+  { name: 'London',      center: [-0.1278, 51.5074], count: 6,  color: '#38bdf8', radius: 0.04  },
+  { name: 'Delhi',       center: [77.1025, 28.7041], count: 5,  color: '#fb7166', radius: 0.045 },
+  { name: 'Dubai',       center: [55.2708, 25.2048], count: 3,  color: '#f4a623', radius: 0.035 },
+  { name: 'Bangalore',   center: [77.5946, 12.9716], count: 2,  color: '#f472b6', radius: 0.03  },
+  { name: 'New Jersey',  center: [-74.4057, 40.0583],count: 2,  color: '#a3e635', radius: 0.03  },
+  { name: 'Pune',        center: [73.8567, 18.5204], count: 2,  color: '#ef4444', radius: 0.02  },
+];
+
+/* deterministic pseudo-random jitter so reloads stay stable */
+function seeded(seed){ let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+
+function scatterPoints(center, count, radius, seed){
+  const rand = seeded(seed);
+  const pts = [];
+  for (let i = 0; i < count; i++){
+    const angle = rand() * Math.PI * 2;
+    const dist = radius * Math.sqrt(rand());
+    const lat = center[1] + dist * Math.sin(angle);
+    const lng = center[0] + (dist * Math.cos(angle)) / Math.cos(center[1] * Math.PI / 180);
+    pts.push([lng, lat]);
+  }
+  return pts;
+}
+
+/* circuit-board style routing: an alternating right-angle staircase from start to end.
+   Zigzag amplitude is scaled to the step size along the dominant axis, not the raw
+   secondary-axis delta, so long mostly-straight routes stay just as chunky/maze-like
+   as short, evenly-angled ones. Amplitude tapers near the finish for a clean landing. */
+function circuitPath(start, end, seed, jogs){
+  const rand = seeded(seed);
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  const primaryIsX = Math.abs(dx) >= Math.abs(dy);
+  const primarySpan = primaryIsX ? dx : dy;
+  const secondaryTotal = primaryIsX ? dy : dx;
+  const primaryStep = primarySpan / jogs;
+  const amp = Math.abs(primaryStep) * 0.85;
+
+  const coords = [[start[0], start[1]]];
+  let cur = [start[0], start[1]];
+
+  for (let i = 1; i <= jogs; i++){
+    const isLast = i === jogs;
+
+    // step along the dominant axis
+    const primaryVal = primaryIsX ? start[0] + primaryStep * i : start[1] + primaryStep * i;
+    cur = primaryIsX
+      ? [isLast ? end[0] : primaryVal, cur[1]]
+      : [cur[0], isLast ? end[1] : primaryVal];
+    coords.push([cur[0], cur[1]]);
+
+    if (isLast){
+      coords.push([end[0], end[1]]);
+      cur = [end[0], end[1]];
+    } else {
+      const t = i / jogs;
+      const taper = 1 - t * 0.7;
+      const target = secondaryTotal * t;
+      const secVal = target + (rand() - 0.5) * 2 * amp * taper;
+      cur = primaryIsX ? [cur[0], start[1] + secVal] : [start[0] + secVal, cur[1]];
+      coords.push([cur[0], cur[1]]);
+    }
+  }
+  return coords;
+}
+
+/* uniform-scale routing: keeps the same real-world spacing between bends
+   everywhere, so a short local Raipur line and a long cross-continent line
+   both zigzag at the same physical granularity — just with proportionally
+   more turns over more distance, rather than a few big sweeping ones. */
+const STEP_DEG = 0.01;
+function uniformTrace(start, end, seed){
+  const dx = end[0] - start[0], dy = end[1] - start[1];
+  const dist = Math.hypot(dx, dy);
+  const jogs = Math.min(2500, Math.max(6, Math.round(dist / STEP_DEG)));
+  return circuitPath(start, end, seed, jogs);
+}
+
+/* =========================================================
+   3. MAP SETUP
+   ========================================================= */
+if (!MAPBOX_TOKEN || MAPBOX_TOKEN === 'YOUR_MAPBOX_ACCESS_TOKEN_HERE') {
+  // token gate stays visible, map never initializes
+} else {
+  document.getElementById('token-gate').style.display = 'none';
+  mapboxgl.accessToken = MAPBOX_TOKEN;
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v11',
+    center: ORIGIN.coords,
+    zoom: 11.2,
+    pitch: 30,
+    projection: 'mercator',
+    antialias: true
+  });
+
+  map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
+
+  map.on('load', () => {
+
+    /* ---- circuit-grid backdrop, covering the whole globe so the sphere reads as
+       a dense maze the way it does in the reference cover art ---- */
+    const grid = [];
+    const gLngMin = -180, gLngMax = 180, gLatMin = -60, gLatMax = 78, gStep = 4;
+    const gridRand = seeded(3);
+    const gridTints = ['rgba(233,230,220,1)', 'rgba(245,200,106,1)', 'rgba(167,139,250,1)', 'rgba(139,215,220,1)'];
+    for (let lng = gLngMin; lng < gLngMax; lng += gStep){
+      for (let lat = gLatMin; lat < gLatMax; lat += gStep){
+        const tint = gridTints[Math.floor(gridRand() * gridTints.length)];
+        if (gridRand() < 0.42){
+          grid.push({ type: 'Feature', properties: { c: tint }, geometry: { type: 'LineString', coordinates: [[lng, lat], [lng + gStep, lat]] } });
+        }
+        if (gridRand() < 0.42){
+          grid.push({ type: 'Feature', properties: { c: tint }, geometry: { type: 'LineString', coordinates: [[lng, lat], [lng, lat + gStep]] } });
+        }
+      }
+    }
+    map.addSource('grid', { type: 'geojson', data: { type: 'FeatureCollection', features: grid } });
+    map.addLayer({
+      id: 'grid-layer', type: 'line', source: 'grid',
+      paint: { 'line-color': ['get', 'c'], 'line-width': 0.5, 'line-opacity': 0.14 }
+    });
+
+    /* ---- arcs from origin to each non-home cluster, routed as circuit traces ---- */
+    const arcFeatures = [];
+    CLUSTERS.filter(c => !c.home).forEach((c, i) => {
+      const coords = uniformTrace(ORIGIN.coords, c.center, i * 7 + 20);
+      arcFeatures.push({ type: 'Feature', properties: { color: c.color, name: c.name }, geometry: { type: 'LineString', coordinates: coords } });
+    });
+
+    map.addSource('arcs', { type: 'geojson', lineMetrics: true, data: { type: 'FeatureCollection', features: arcFeatures } });
+    // wide, blurred underlayer = glow
+    map.addLayer({
+      id: 'arcs-glow',
+      type: 'line',
+      source: 'arcs',
+      layout: { 'line-join': 'round' },
+      paint: {
+        'line-color': ['get', 'color'],
+        'line-width': 5,
+        'line-blur': 4,
+        'line-opacity': 0.35
+      }
+    });
+    // thin, crisp trace on top
+    map.addLayer({
+      id: 'arcs-line',
+      type: 'line',
+      source: 'arcs',
+      layout: { 'line-join': 'round' },
+      paint: {
+        'line-color': ['get', 'color'],
+        'line-width': 1,
+        'line-opacity': 0.85
+      }
+    });
+    // travelling light pulse, animated continuously
+    map.addLayer({
+      id: 'arcs-pulse',
+      type: 'line',
+      source: 'arcs',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-width': 2.2, 'line-blur': 1 }
+    });
+
+    /* ---- local Raipur radiating lines (short circuit traces, from origin to each of the 14 city points) ---- */
+    const home = CLUSTERS.find(c => c.home);
+    const homePts = scatterPoints(home.center, home.count, home.radius, 7);
+    const localFeatures = [];
+    homePts.forEach((pt, i) => {
+      const coords = uniformTrace(ORIGIN.coords, pt, i + 50);
+      localFeatures.push({ type: 'Feature', properties: { color: home.color }, geometry: { type: 'LineString', coordinates: coords } });
+    });
+    map.addSource('local-lines', { type: 'geojson', lineMetrics: true, data: { type: 'FeatureCollection', features: localFeatures } });
+    map.addLayer({
+      id: 'local-lines-glow',
+      type: 'line',
+      source: 'local-lines',
+      layout: { 'line-join': 'round' },
+      paint: { 'line-color': ['get', 'color'], 'line-width': 4, 'line-blur': 3, 'line-opacity': 0.25 }
+    });
+    map.addLayer({
+      id: 'local-lines-layer',
+      type: 'line',
+      source: 'local-lines',
+      layout: { 'line-join': 'round' },
+      paint: { 'line-color': ['get', 'color'], 'line-width': 0.8, 'line-opacity': 0.55 }
+    });
+    map.addLayer({
+      id: 'local-lines-pulse',
+      type: 'line',
+      source: 'local-lines',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-width': 1.8, 'line-blur': 0.8 }
+    });
+
+    /* ---- continuous travelling-light gradient animation along every trace ---- */
+    function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+    function pulseGradient(phase){
+      const b = clamp(phase, 0.001, 0.999);
+      const a = clamp(b - 0.1, 0.0001, b - 0.0005);
+      const c = clamp(b + 0.1, b + 0.0005, 0.9995);
+      return [
+        'interpolate', ['linear'], ['line-progress'],
+        0, 'rgba(255,255,255,0)',
+        a, 'rgba(255,255,255,0)',
+        b, 'rgba(255,255,255,0.95)',
+        c, 'rgba(255,255,255,0)',
+        1, 'rgba(255,255,255,0)'
+      ];
+    }
+    const PULSE_MS = 3400;
+    let lastPulseFrame = 0;
+    function animatePulse(timestamp){
+      if (timestamp - lastPulseFrame > 55){
+        const phase = (timestamp % PULSE_MS) / PULSE_MS;
+        const grad = pulseGradient(phase);
+        map.setPaintProperty('arcs-pulse', 'line-gradient', grad);
+        map.setPaintProperty('local-lines-pulse', 'line-gradient', grad);
+        lastPulseFrame = timestamp;
+      }
+      requestAnimationFrame(animatePulse);
+    }
+    requestAnimationFrame(animatePulse);
+
+    /* ---- city dot markers ---- */
+    CLUSTERS.forEach((cluster, idx) => {
+      const pts = cluster.home ? homePts : scatterPoints(cluster.center, cluster.count, cluster.radius, idx + 1);
+      const dotRand = seeded(idx + 90);
+      pts.forEach(coord => {
+        const size = 5 + dotRand() * 5;
+        const el = document.createElement('div');
+        el.className = 'dot-marker';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.background = `radial-gradient(circle, ${cluster.color} 0%, ${cluster.color} 25%, transparent 70%)`;
+        el.style.boxShadow = `0 0 ${size * 2.4}px ${size * 0.7}px ${cluster.color}`;
+        new mapboxgl.Marker({ element: el }).setLngLat(coord).addTo(map);
+      });
+
+      // one popup-enabled invisible marker at the cluster centroid for hover info
+      const labelEl = document.createElement('div');
+      labelEl.style.width = '1px'; labelEl.style.height = '1px';
+      const popup = new mapboxgl.Popup({ offset: 12, closeButton: false })
+        .setHTML(`<div class="popup-city">${cluster.name}</div><div class="popup-count">${cluster.count} piece${cluster.count > 1 ? 's' : ''} delivered</div>`);
+      new mapboxgl.Marker({ element: labelEl })
+        .setLngLat(cluster.home ? ORIGIN.coords : cluster.center)
+        .setPopup(popup)
+        .addTo(map);
+    });
+
+    /* ---- origin / production marker ---- */
+    const originEl = document.createElement('div');
+    originEl.className = 'origin-marker';
+    originEl.innerHTML = '<div class="ring"></div><div class="ring"></div><div class="core"></div>';
+    new mapboxgl.Marker({ element: originEl })
+      .setLngLat(ORIGIN.coords)
+      .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false })
+        .setHTML(`<div class="popup-city">${ORIGIN.name}</div><div class="popup-count">Point of production</div>`))
+      .addTo(map);
+  });
+
+  /* ---- atmosphere for globe view ---- */
+  map.on('style.load', () => {
+    map.setFog({
+      color: 'rgb(14,16,26)',
+      'high-color': 'rgb(58,56,80)',
+      'horizon-blend': 0.4,
+      'space-color': 'rgb(2,3,7)',
+      'star-intensity': 0.5
+    });
+  });
+
+  /* =========================================================
+     4. VIEW CONTROLS
+     ========================================================= */
+  const btnHome = document.getElementById('btn-home');
+  const btnGlobe = document.getElementById('btn-globe');
+  const halo = document.getElementById('halo');
+
+  function setActive(btn){
+    [btnHome, btnGlobe].forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  btnHome.addEventListener('click', () => {
+    map.setProjection('mercator');
+    map.flyTo({ center: ORIGIN.coords, zoom: 11.2, pitch: 30, bearing: 0, duration: 2200 });
+    setActive(btnHome);
+    halo.classList.remove('on');
+  });
+
+  btnGlobe.addEventListener('click', () => {
+    map.setProjection('globe');
+    map.flyTo({ center: [40, 25], zoom: 1.5, pitch: 0, bearing: 0, duration: 2600 });
+    setActive(btnGlobe);
+    halo.classList.add('on');
+  });
+
+  setActive(btnHome);
+
+  /* =========================================================
+     5. LEGEND
+     ========================================================= */
+  const legend = document.getElementById('legend');
+  const total = CLUSTERS.reduce((sum, c) => sum + c.count, 0);
+  let rows = `<div class="lg-title">Delivery network</div>`;
+  CLUSTERS.forEach(c => {
+    rows += `
+      <div class="lg-row" data-lng="${c.home ? ORIGIN.coords[0] : c.center[0]}" data-lat="${c.home ? ORIGIN.coords[1] : c.center[1]}" data-zoom="${c.home ? 11.5 : 5}">
+        <span class="lg-dot" style="background:${c.color}; box-shadow:0 0 6px ${c.color};"></span>
+        <span class="lg-name">${c.name}</span>
+        <span class="lg-count">${c.count}</span>
+      </div>`;
+  });
+  rows += `<div class="lg-total"><span>Total pieces</span><b>${total}</b></div>`;
+  legend.innerHTML = rows;
+
+  legend.querySelectorAll('.lg-row').forEach(row => {
+    row.addEventListener('click', () => {
+      map.setProjection('mercator');
+      map.flyTo({
+        center: [parseFloat(row.dataset.lng), parseFloat(row.dataset.lat)],
+        zoom: parseFloat(row.dataset.zoom),
+        pitch: 20,
+        duration: 2000
+      });
+      halo.classList.remove('on');
+      [btnHome, btnGlobe].forEach(b => b.classList.remove('active'));
+    });
+  });
+}
+</script>
+</body>
+</html>
