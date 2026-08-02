@@ -1,730 +1,1024 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Show us what you're visualising</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Show us what you're visualising</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
 
-<style>
-  :root{
-    --bg: #05070d;
-    --ink: #e9e6dc;
-    --ink-dim: #8b8f9c;
-    --line: rgba(233,230,220,0.14);
-    --home: #f5c86a;
-    --paper: #f7f4ec;
-  }
-  *{ box-sizing:border-box; }
-  html, body{ margin:0; padding:0; width:100%; height:100%; background:var(--bg); overflow:hidden; }
-  body{ font-family:'Space Grotesk', sans-serif; color:var(--ink); }
+  <style>
+    :root {
+      --bg: #05070d;
+      --ink: #e9e6dc;
+      --ink-dim: #8b8f9c;
+      --line: rgba(233, 230, 220, 0.14);
+      --home: #f5c86a;
+      --paper: #f7f4ec;
+    }
 
-  #stage{
-    position:absolute; inset:24px;
-    border:1px solid var(--line);
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  #canvas-wrap{
-    position:absolute; inset:0;
-    background:var(--paper);
-  }
-  canvas{ display:block; width:100%; height:100%; touch-action:none; }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      overflow: hidden;
+    }
 
-  .hud{ position:absolute; z-index:10; pointer-events:none; }
-  .hud > *{ pointer-events:all; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+    }
 
-  #masthead{
-    top:20px; left:20px; right:20px;
-    display:flex; justify-content:space-between; align-items:flex-start;
-  }
-  .eyebrow{
-    font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase;
-    color:var(--ink-dim); margin-bottom:6px;
-  }
-  #masthead h1{
-    font-family:'Caveat', cursive; font-weight:700;
-    font-size:clamp(28px, 4vw, 42px); margin:0 0 2px; line-height:1;
-    color:#1c1a14; max-width:520px;
-  }
-  #masthead p{
-    margin:0; font-size:12px; color:#6b6656; max-width:440px;
-  }
-  #masthead .eyebrow{ color:#9a9484; }
+    #stage {
+      position: absolute;
+      inset: 24px;
+      border: 1px solid var(--line);
+    }
 
-  #action-btn{
-    font-family:'Space Grotesk', sans-serif; font-size:11px; letter-spacing:0.1em;
-    text-transform:uppercase; color:var(--bg); background:var(--home);
-    border:none; padding:12px 22px; cursor:pointer; white-space:nowrap;
-    transition:transform 0.15s ease, opacity 0.15s ease;
-  }
-  #action-btn:hover{ transform:translateY(-1px); }
-  #action-btn:active{ transform:translateY(0); }
-  #action-btn.refresh{ background:transparent; color:#1c1a14; border:1px solid rgba(28,26,20,0.35); }
+    #canvas-wrap {
+      position: absolute;
+      inset: 0;
+      background: var(--paper);
+    }
 
-  .ghost-btn{
-    font-family:'Space Grotesk', sans-serif; font-size:11px; letter-spacing:0.1em;
-    text-transform:uppercase; color:var(--ink); background:transparent;
-    border:1px solid rgba(233,230,220,0.3); padding:12px 22px; cursor:pointer;
-    white-space:nowrap; transition:transform 0.15s ease, border-color 0.15s ease;
-  }
-  .ghost-btn:hover{ transform:translateY(-1px); border-color:var(--home); color:var(--home); }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
 
-  .gallery-item{
-    background:#111; border:1px solid var(--line); overflow:hidden; aspect-ratio:1;
-  }
-  .gallery-item img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .gallery-empty{ color:var(--ink-dim); font-size:13px; grid-column:1/-1; }
+    .hud {
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
 
-  #toolbar{
-    bottom:20px; left:20px;
-    display:flex; align-items:center; gap:16px;
-    background:rgba(28,26,20,0.06);
-    border:1px solid rgba(28,26,20,0.14);
-    padding:10px 16px;
-  }
-  #toolbar.hidden{ display:none; }
+    .hud>* {
+      pointer-events: all;
+    }
 
-  .swatches{ display:flex; gap:7px; }
-  .swatch{
-    width:18px; height:18px; border-radius:50%; cursor:pointer;
-    border:2px solid transparent; transition:transform 0.15s ease;
-  }
-  .swatch:hover{ transform:scale(1.15); }
-  .swatch.active{ border-color:#1c1a14; }
+    #masthead {
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
 
-  #customColor{
-    width:22px; height:22px; border:none; padding:0; background:none; cursor:pointer;
-  }
+    .eyebrow {
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 6px;
+    }
 
-  .sizes{ display:flex; align-items:center; gap:8px; }
-  .size-dot{
-    border-radius:50%; background:#1c1a14; cursor:pointer; opacity:0.35;
-    transition:opacity 0.15s ease;
-  }
-  .size-dot.active{ opacity:1; }
+    #masthead h1 {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 0 0 2px;
+      line-height: 1;
+      color: #1c1a14;
+      max-width: 520px;
+    }
 
-  .divider{ width:1px; height:20px; background:rgba(28,26,20,0.15); }
+    #masthead p {
+      margin: 0;
+      font-size: 12px;
+      color: #6b6656;
+      max-width: 440px;
+    }
 
-  .brushes{ display:flex; gap:6px; }
-  .brush-btn{
-    font-family:'Space Grotesk', sans-serif; font-size:9.5px; letter-spacing:0.06em;
-    text-transform:uppercase; color:#6b6656; background:none;
-    border:1px solid rgba(28,26,20,0.18); padding:5px 9px; cursor:pointer;
-    transition:color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  }
-  .brush-btn:hover{ color:#1c1a14; border-color:rgba(28,26,20,0.35); }
-  .brush-btn.active{ color:#1c1a14; background:rgba(28,26,20,0.1); border-color:#1c1a14; }
+    #masthead .eyebrow {
+      color: #9a9484;
+    }
 
-  #clearBtn, #undoBtn, #importBtn{
-    font-family:'Space Grotesk', sans-serif; font-size:10.5px; letter-spacing:0.08em;
-    text-transform:uppercase; color:#6b6656; background:none; border:none; cursor:pointer;
-  }
-  #clearBtn:hover, #undoBtn:hover, #importBtn:hover{ color:#1c1a14; }
+    #action-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--home);
+      border: none;
+      padding: 12px 22px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
 
-  @media (max-width: 680px){
-    #masthead{ flex-direction:column; gap:14px; }
-    #masthead p{ max-width:none; }
-    #toolbar{ right:20px; left:20px; flex-wrap:wrap; justify-content:center; }
-  }
-</style>
+    #action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #action-btn:active {
+      transform: translateY(0);
+    }
+
+    #action-btn.refresh {
+      background: transparent;
+      color: #1c1a14;
+      border: 1px solid rgba(28, 26, 20, 0.35);
+    }
+
+    .ghost-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid rgba(233, 230, 220, 0.3);
+      padding: 12px 22px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--home);
+      color: var(--home);
+    }
+
+    .gallery-item {
+      background: #111;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-empty {
+      color: var(--ink-dim);
+      font-size: 13px;
+      grid-column: 1/-1;
+    }
+
+    #toolbar {
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(28, 26, 20, 0.06);
+      border: 1px solid rgba(28, 26, 20, 0.14);
+      padding: 10px 16px;
+    }
+
+    #toolbar.hidden {
+      display: none;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s ease;
+    }
+
+    .swatch:hover {
+      transform: scale(1.15);
+    }
+
+    .swatch.active {
+      border-color: #1c1a14;
+    }
+
+    #customColor {
+      width: 22px;
+      height: 22px;
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .sizes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .size-dot {
+      border-radius: 50%;
+      background: #1c1a14;
+      cursor: pointer;
+      opacity: 0.35;
+      transition: opacity 0.15s ease;
+    }
+
+    .size-dot.active {
+      opacity: 1;
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(28, 26, 20, 0.15);
+    }
+
+    .brushes {
+      display: flex;
+      gap: 6px;
+    }
+
+    .brush-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b6656;
+      background: none;
+      border: 1px solid rgba(28, 26, 20, 0.18);
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .brush-btn:hover {
+      color: #1c1a14;
+      border-color: rgba(28, 26, 20, 0.35);
+    }
+
+    .brush-btn.active {
+      color: #1c1a14;
+      background: rgba(28, 26, 20, 0.1);
+      border-color: #1c1a14;
+    }
+
+    #clearBtn,
+    #undoBtn,
+    #importBtn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b6656;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #clearBtn:hover,
+    #undoBtn:hover,
+    #importBtn:hover {
+      color: #1c1a14;
+    }
+
+    @media (max-width: 680px) {
+      #masthead {
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      #masthead p {
+        max-width: none;
+      }
+
+      #toolbar {
+        right: 20px;
+        left: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+
+
+    /* ================= CHATBOT ================= */
+
+    /* ================= CHATBOT ================= */
+
+    #chatbot {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 340px;
+      height: 500px;
+      background: rgba(18, 18, 18, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      backdrop-filter: blur(10px);
+      color: white;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    #chat-header {
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #chat-messages .user {
+      color: #8ec5ff;
+      font-weight: 600;
+    }
+
+    #chat-messages .bot {
+      color: #ffffff;
+    }
+
+    #chat-input-area {
+      display: flex;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 16px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    #chat-input::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    #send-btn {
+      border: none;
+      background: #2d7ff9;
+      color: white;
+      padding: 0 20px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    #send-btn:hover {
+      background: #1d6ef0;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="stage">
-  <div id="canvas-wrap">
-    <canvas id="paperCanvas"></canvas>
-  </div>
-
-  <div id="masthead" class="hud">
-    <div>
-      <div class="eyebrow">Engagement Components — 02</div>
-      <h1>Show us what you're visualising</h1>
-      <p>and we'll bring it to life.</p>
+  <div id="stage">
+    <div id="canvas-wrap">
+      <canvas id="paperCanvas"></canvas>
     </div>
-    <div style="display:flex; gap:10px;">
-      <button id="galleryBtn" class="ghost-btn">Gallery</button>
-      <button id="action-btn">Submit</button>
+
+    <div id="masthead" class="hud">
+      <div>
+        <div class="eyebrow">Engagement Components — 02</div>
+        <h1>Show us what you're visualising</h1>
+        <p>and we'll bring it to life.</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button id="galleryBtn" class="ghost-btn">Gallery</button>
+        <button id="action-btn">Submit</button>
+      </div>
+    </div>
+
+    <div id="toolbar" class="hud">
+      <div class="brushes" id="brushes"></div>
+      <div class="divider"></div>
+      <div class="swatches" id="swatches"></div>
+      <input type="color" id="customColor" value="#1c1a14" title="Custom color" />
+      <div class="divider"></div>
+      <div class="sizes" id="sizes"></div>
+      <div class="divider"></div>
+      <button id="importBtn" title="Alt+drag an image to reposition it">Import image</button>
+      <input type="file" id="imageInput" accept="image/*" style="display:none" />
+      <button id="undoBtn">Undo</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <div id="galleryOverlay" class="hud"
+      style="display:none; inset:0; background:rgba(5,7,13,0.94); z-index:30; padding:60px;">
+      <button id="galleryClose" class="ghost-btn" style="position:absolute; top:20px; right:20px;">Close</button>
+      <div class="eyebrow" style="color:#8b8f9c;">Everyone's submissions</div>
+      <h2 style="font-family:'Caveat',cursive; color:#e9e6dc; font-size:32px; margin:4px 0 24px;">The gallery so far
+      </h2>
+      <div id="galleryGrid"
+        style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:16px; max-height:calc(100% - 100px); overflow-y:auto;">
+      </div>
     </div>
   </div>
 
-  <div id="toolbar" class="hud">
-    <div class="brushes" id="brushes"></div>
-    <div class="divider"></div>
-    <div class="swatches" id="swatches"></div>
-    <input type="color" id="customColor" value="#1c1a14" title="Custom color" />
-    <div class="divider"></div>
-    <div class="sizes" id="sizes"></div>
-    <div class="divider"></div>
-    <button id="importBtn" title="Alt+drag an image to reposition it">Import image</button>
-    <input type="file" id="imageInput" accept="image/*" style="display:none" />
-    <button id="undoBtn">Undo</button>
-    <button id="clearBtn">Clear</button>
-  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    import { getDatabase, ref, push, get, query, limitToLast } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
-  <div id="galleryOverlay" class="hud" style="display:none; inset:0; background:rgba(5,7,13,0.94); z-index:30; padding:60px;">
-    <button id="galleryClose" class="ghost-btn" style="position:absolute; top:20px; right:20px;">Close</button>
-    <div class="eyebrow" style="color:#8b8f9c;">Everyone's submissions</div>
-    <h2 style="font-family:'Caveat',cursive; color:#e9e6dc; font-size:32px; margin:4px 0 24px;">The gallery so far</h2>
-    <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:16px; max-height:calc(100% - 100px); overflow-y:auto;"></div>
-  </div>
-</div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfAwTqQk8F07Oa86Za8TI5umLXALAH0eI",
+      authDomain: "design-workflows.firebaseapp.com",
+      databaseURL: "https://design-workflows-default-rtdb.firebaseio.com",
+      projectId: "design-workflows",
+      storageBucket: "design-workflows.firebasestorage.app",
+      messagingSenderId: "580479136886",
+      appId: "1:580479136886:web:d9e61617ea6ccbea975b57"
+    };
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getDatabase(firebaseApp);
+    window.fb = { db, ref, push, get, query, limitToLast };
+  </script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getDatabase, ref, push, get, query, limitToLast } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+  <script>
+    /* =========================================================
+       SETUP
+       ========================================================= */
+    const wrap = document.getElementById('canvas-wrap');
+    const canvas = document.getElementById('paperCanvas');
+    const ctx = canvas.getContext('2d');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBfAwTqQk8F07Oa86Za8TI5umLXALAH0eI",
-  authDomain: "design-workflows.firebaseapp.com",
-  databaseURL: "https://design-workflows-default-rtdb.firebaseio.com",
-  projectId: "design-workflows",
-  storageBucket: "design-workflows.firebasestorage.app",
-  messagingSenderId: "580479136886",
-  appId: "1:580479136886:web:d9e61617ea6ccbea975b57"
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getDatabase(firebaseApp);
-window.fb = { db, ref, push, get, query, limitToLast };
-</script>
+    function resizeCanvas() {
+      const rect = wrap.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      redrawAll();
+    }
+    window.addEventListener('resize', resizeCanvas);
 
-<script>
-/* =========================================================
-   SETUP
-   ========================================================= */
-const wrap = document.getElementById('canvas-wrap');
-const canvas = document.getElementById('paperCanvas');
-const ctx = canvas.getContext('2d');
+    /* =========================================================
+       DRAWING STATE
+       ========================================================= */
+    const PALETTE = ['#1c1a14', '#c0392b', '#e0973a', '#2e7d5b', '#3a6ea8', '#8e5bb5', '#d488a8'];
+    let currentColor = PALETTE[0];
+    let currentSize = 5;
+    let drawing = false;
+    let currentStroke = null;
+    let strokes = []; // {color, size, brush, points:[{x,y}]}
+    let images = []; // {img, x, y, w, h}
+    let history = []; // ['stroke' | 'image', ...] in the order things were added
+    let draggingImage = null;
+    let dragOffset = { x: 0, y: 0 };
+    let physicsMode = false;
 
-function resizeCanvas(){
-  const rect = wrap.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
-  redrawAll();
-}
-window.addEventListener('resize', resizeCanvas);
+    const BRUSHES = {
+      pen: { label: 'Pen', mode: 'line', cap: 'round', alpha: 1, widthMult: 1, blend: 'source-over' },
+      marker: { label: 'Marker', mode: 'line', cap: 'square', alpha: 0.6, widthMult: 1.9, blend: 'source-over' },
+      highlighter: { label: 'Hi-lite', mode: 'line', cap: 'square', alpha: 0.28, widthMult: 3.4, blend: 'multiply' },
+      chalk: { label: 'Chalk', mode: 'chalk', cap: 'round', alpha: 0.55, widthMult: 1.3, blend: 'source-over' },
+      spray: { label: 'Spray', mode: 'dots', cap: 'round', alpha: 0.8, widthMult: 1, blend: 'source-over' },
+      eraser: { label: 'Eraser', mode: 'erase', cap: 'round', alpha: 1, widthMult: 2.4, blend: 'destination-out' }
+    };
+    let currentBrush = 'pen';
 
-/* =========================================================
-   DRAWING STATE
-   ========================================================= */
-const PALETTE = ['#1c1a14', '#c0392b', '#e0973a', '#2e7d5b', '#3a6ea8', '#8e5bb5', '#d488a8'];
-let currentColor = PALETTE[0];
-let currentSize = 5;
-let drawing = false;
-let currentStroke = null;
-let strokes = []; // {color, size, brush, points:[{x,y}]}
-let images = []; // {img, x, y, w, h}
-let history = []; // ['stroke' | 'image', ...] in the order things were added
-let draggingImage = null;
-let dragOffset = { x: 0, y: 0 };
-let physicsMode = false;
-
-const BRUSHES = {
-  pen:         { label: 'Pen',     mode: 'line', cap: 'round',  alpha: 1,    widthMult: 1,   blend: 'source-over' },
-  marker:      { label: 'Marker',  mode: 'line', cap: 'square', alpha: 0.6,  widthMult: 1.9, blend: 'source-over' },
-  highlighter: { label: 'Hi-lite', mode: 'line', cap: 'square', alpha: 0.28, widthMult: 3.4, blend: 'multiply' },
-  chalk:       { label: 'Chalk',   mode: 'chalk',cap: 'round',  alpha: 0.55, widthMult: 1.3, blend: 'source-over' },
-  spray:       { label: 'Spray',   mode: 'dots', cap: 'round',  alpha: 0.8,  widthMult: 1,   blend: 'source-over' },
-  eraser:      { label: 'Eraser', mode: 'erase', cap: 'round',  alpha: 1,    widthMult: 2.4, blend: 'destination-out' }
-};
-let currentBrush = 'pen';
-
-/* ---- custom per-tool cursors, built as inline SVG data URIs ---- */
-function svgCursor(inner, hx, hy, fallback){
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'>${inner}</svg>`;
-  const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22').replace(/#/g, '%23');
-  return `url("data:image/svg+xml,${encoded}") ${hx} ${hy}, ${fallback || 'crosshair'}`;
-}
-const CURSORS = {
-  pen: svgCursor(
-    `<g transform="rotate(45 15 15)">
+    /* ---- custom per-tool cursors, built as inline SVG data URIs ---- */
+    function svgCursor(inner, hx, hy, fallback) {
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'>${inner}</svg>`;
+      const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22').replace(/#/g, '%23');
+      return `url("data:image/svg+xml,${encoded}") ${hx} ${hy}, ${fallback || 'crosshair'}`;
+    }
+    const CURSORS = {
+      pen: svgCursor(
+        `<g transform="rotate(45 15 15)">
        <rect x="12" y="3" width="6" height="15" rx="1.5" fill="#3a3a3a"/>
        <polygon points="12,18 18,18 15,26" fill="#1c1a14"/>
      </g>`, 6, 26),
-  marker: svgCursor(
-    `<g transform="rotate(45 15 15)">
+      marker: svgCursor(
+        `<g transform="rotate(45 15 15)">
        <rect x="10" y="3" width="10" height="14" rx="2" fill="#454545"/>
        <rect x="10" y="17" width="10" height="6" rx="1" fill="#1c1a14"/>
      </g>`, 6, 24),
-  highlighter: svgCursor(
-    `<g transform="rotate(45 15 15)">
+      highlighter: svgCursor(
+        `<g transform="rotate(45 15 15)">
        <rect x="8" y="3" width="14" height="12" rx="2" fill="#f0d488"/>
        <rect x="8" y="15" width="14" height="8" fill="#c9a13a"/>
      </g>`, 6, 22),
-  chalk: svgCursor(
-    `<g transform="rotate(45 15 15)">
+      chalk: svgCursor(
+        `<g transform="rotate(45 15 15)">
        <rect x="10" y="6" width="10" height="17" rx="5" fill="#efe9db" stroke="#b9b3a2" stroke-width="1"/>
      </g>`, 8, 24),
-  spray: svgCursor(
-    `<rect x="11" y="12" width="9" height="14" rx="2" fill="#454545"/>
+      spray: svgCursor(
+        `<rect x="11" y="12" width="9" height="14" rx="2" fill="#454545"/>
      <rect x="13" y="7" width="5" height="5" rx="1" fill="#1c1a14"/>
      <circle cx="8" cy="6" r="1" fill="#8e5bb5"/>
      <circle cx="12" cy="3" r="1" fill="#8e5bb5"/>
      <circle cx="5" cy="10" r="1" fill="#8e5bb5"/>`, 15, 15),
-  eraser: svgCursor(
-    `<rect x="6" y="11" width="18" height="11" rx="2.5" fill="#e39aa0" stroke="#c97077" stroke-width="1"/>`, 15, 16)
-};
-function setCursor(tool){
-  canvas.style.cursor = CURSORS[tool] || 'crosshair';
-}
-
-/* brush type UI */
-const brushesEl = document.getElementById('brushes');
-Object.keys(BRUSHES).forEach(key => {
-  const b = document.createElement('button');
-  b.className = 'brush-btn' + (key === currentBrush ? ' active' : '');
-  b.textContent = BRUSHES[key].label;
-  b.addEventListener('click', () => {
-    currentBrush = key;
-    document.querySelectorAll('.brush-btn').forEach(el => el.classList.remove('active'));
-    b.classList.add('active');
-    if (!draggingImage) setCursor(currentBrush);
-  });
-  brushesEl.appendChild(b);
-});
-
-/* palette UI */
-const swatchesEl = document.getElementById('swatches');
-PALETTE.forEach((color, i) => {
-  const s = document.createElement('div');
-  s.className = 'swatch' + (i === 0 ? ' active' : '');
-  s.style.background = color;
-  s.addEventListener('click', () => {
-    currentColor = color;
-    document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
-    s.classList.add('active');
-  });
-  swatchesEl.appendChild(s);
-});
-document.getElementById('customColor').addEventListener('input', (e) => {
-  currentColor = e.target.value;
-  document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
-});
-
-/* brush size UI */
-const SIZES = [3, 6, 12];
-const sizesEl = document.getElementById('sizes');
-SIZES.forEach((size, i) => {
-  const d = document.createElement('div');
-  d.className = 'size-dot' + (size === currentSize ? ' active' : '');
-  const px = 8 + size * 0.9;
-  d.style.width = px + 'px';
-  d.style.height = px + 'px';
-  d.addEventListener('click', () => {
-    currentSize = size;
-    document.querySelectorAll('.size-dot').forEach(el => el.classList.remove('active'));
-    d.classList.add('active');
-  });
-  sizesEl.appendChild(d);
-});
-
-/* =========================================================
-   POINTER DRAWING
-   ========================================================= */
-function getPos(e){
-  const rect = canvas.getBoundingClientRect();
-  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-}
-
-function scatterPoint(p, radius){
-  const a = Math.random() * Math.PI * 2;
-  const r = Math.random() * radius;
-  return { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r, a: 0.25 + Math.random() * 0.65, r: 0.4 + Math.random() * 1.1 };
-}
-function spraySpurt(stroke, p){
-  const n = 22;
-  for (let i = 0; i < n; i++) stroke.points.push(scatterPoint(p, currentSize * 1.8));
-}
-
-function imageAt(pos){
-  for (let i = images.length - 1; i >= 0; i--){
-    const im = images[i];
-    if (pos.x >= im.x && pos.x <= im.x + im.w && pos.y >= im.y && pos.y <= im.y + im.h) return im;
-  }
-  return null;
-}
-
-canvas.addEventListener('pointerdown', (e) => {
-  if (physicsMode) return;
-  const p = getPos(e);
-  const hit = e.altKey ? imageAt(p) : null;
-  if (hit){
-    draggingImage = hit;
-    dragOffset = { x: p.x - hit.x, y: p.y - hit.y };
-    canvas.style.cursor = 'grabbing';
-    return;
-  }
-  drawing = true;
-  currentStroke = { color: currentColor, size: currentSize, brush: currentBrush, points: [p] };
-  if (currentBrush === 'spray') spraySpurt(currentStroke, p);
-});
-
-canvas.addEventListener('pointermove', (e) => {
-  if (physicsMode) return;
-  const p = getPos(e);
-
-  if (draggingImage){
-    draggingImage.x = p.x - dragOffset.x;
-    draggingImage.y = p.y - dragOffset.y;
-    redrawAll();
-    return;
-  }
-
-  if (drawing){
-    if (currentBrush === 'spray') spraySpurt(currentStroke, p);
-    else currentStroke.points.push(p);
-    liveRedraw();
-    return;
-  }
-
-  // hover feedback when nothing is happening — only hint "movable" while Alt is held
-  canvas.style.cursor = (e.altKey && imageAt(p)) ? 'grab' : (CURSORS[currentBrush] || 'crosshair');
-});
-
-function finishStroke(){
-  if (draggingImage){
-    draggingImage = null;
-    setCursor(currentBrush);
-    return;
-  }
-  if (!drawing) return;
-  drawing = false;
-  if (currentStroke && currentStroke.points.length > 1){
-    strokes.push(currentStroke);
-    history.push('stroke');
-  } else if (currentStroke){
-    // treat a single click as a dot: duplicate the point
-    currentStroke.points.push({ x: currentStroke.points[0].x + 0.1, y: currentStroke.points[0].y });
-    strokes.push(currentStroke);
-    history.push('stroke');
-  }
-  currentStroke = null;
-  redrawAll();
-}
-window.addEventListener('pointerup', finishStroke);
-window.addEventListener('pointercancel', finishStroke);
-
-/* generic renderer: draws one stroke's points onto any 2D context, with an
-   optional coordinate offset (used when baking an isolated stroke tile) */
-function renderStroke(targetCtx, stroke, offsetX, offsetY){
-  offsetX = offsetX || 0; offsetY = offsetY || 0;
-  const brush = BRUSHES[stroke.brush] || BRUSHES.pen;
-  const pts = stroke.points;
-  if (pts.length < 2) return;
-
-  targetCtx.save();
-  targetCtx.globalAlpha = brush.alpha;
-  targetCtx.globalCompositeOperation = brush.blend;
-  targetCtx.strokeStyle = stroke.color;
-  targetCtx.fillStyle = stroke.color;
-  targetCtx.lineCap = brush.cap;
-  targetCtx.lineJoin = 'round';
-
-  if (brush.mode === 'dots'){
-    pts.forEach(p => {
-      const r = Math.max(0.35, stroke.size * 0.22 * (p.r || 1));
-      targetCtx.globalAlpha = brush.alpha * (p.a || 1);
-      targetCtx.beginPath();
-      targetCtx.arc(p.x - offsetX, p.y - offsetY, r, 0, Math.PI * 2);
-      targetCtx.fill();
-    });
-  } else if (brush.mode === 'chalk'){
-    // jitter is generated once per stroke and cached, so already-drawn
-    // chalk strokes stay put instead of re-randomizing (and visibly
-    // "shaking") on every redraw while a new stroke is being drawn
-    if (!stroke._jitter){
-      stroke._jitter = [0, 1, 2].map(() => ({
-        jx: (Math.random() - 0.5) * stroke.size * 0.25,
-        jy: (Math.random() - 0.5) * stroke.size * 0.25
-      }));
-    }
-    const passes = 3;
-    for (let pass = 0; pass < passes; pass++){
-      targetCtx.globalAlpha = brush.alpha / passes * 1.4;
-      targetCtx.lineWidth = Math.max(1, stroke.size * brush.widthMult * (0.6 + pass * 0.2));
-      targetCtx.beginPath();
-      const { jx, jy } = stroke._jitter[pass];
-      targetCtx.moveTo(pts[0].x - offsetX + jx, pts[0].y - offsetY + jy);
-      for (let i = 1; i < pts.length; i++) targetCtx.lineTo(pts[i].x - offsetX + jx, pts[i].y - offsetY + jy);
-      targetCtx.stroke();
-    }
-  } else {
-    // line & erase modes
-    targetCtx.lineWidth = Math.max(1, stroke.size * brush.widthMult);
-    targetCtx.beginPath();
-    targetCtx.moveTo(pts[0].x - offsetX, pts[0].y - offsetY);
-    for (let i = 1; i < pts.length; i++) targetCtx.lineTo(pts[i].x - offsetX, pts[i].y - offsetY);
-    targetCtx.stroke();
-  }
-  targetCtx.restore();
-}
-
-function drawImages(targetCtx){
-  images.forEach(im => targetCtx.drawImage(im.img, im.x, im.y, im.w, im.h));
-}
-
-function liveRedraw(){
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawImages(ctx);
-  strokes.forEach(s => renderStroke(ctx, s));
-  if (currentStroke) renderStroke(ctx, currentStroke);
-}
-
-function redrawAll(){
-  if (physicsMode) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawImages(ctx);
-  strokes.forEach(s => renderStroke(ctx, s));
-}
-
-document.getElementById('clearBtn').addEventListener('click', () => {
-  if (physicsMode) return;
-  strokes = [];
-  images = [];
-  history = [];
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-});
-
-document.getElementById('undoBtn').addEventListener('click', () => {
-  if (physicsMode) return;
-  const last = history.pop();
-  if (last === 'image') images.pop();
-  else if (last === 'stroke') strokes.pop();
-  redrawAll();
-});
-
-document.getElementById('importBtn').addEventListener('click', () => {
-  if (physicsMode) return;
-  document.getElementById('imageInput').click();
-});
-document.getElementById('imageInput').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const img = new Image();
-    img.onload = () => {
-      const maxDim = Math.min(canvas.width, canvas.height) * 0.35;
-      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-      const w = img.width * scale, h = img.height * scale;
-      images.push({
-        img,
-        x: canvas.width / 2 - w / 2 + (Math.random() - 0.5) * 40,
-        y: canvas.height / 2 - h / 2 + (Math.random() - 0.5) * 40,
-        w, h
-      });
-      history.push('image');
-      redrawAll();
+      eraser: svgCursor(
+        `<rect x="6" y="11" width="18" height="11" rx="2.5" fill="#e39aa0" stroke="#c97077" stroke-width="1"/>`, 15, 16)
     };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-});
+    function setCursor(tool) {
+      canvas.style.cursor = CURSORS[tool] || 'crosshair';
+    }
 
-/* =========================================================
-   GRAVITY MODE
-   ========================================================= */
-const actionBtn = document.getElementById('action-btn');
-const toolbar = document.getElementById('toolbar');
-let engine, runner, world;
-let tiles = []; // {body, image, w, h}
-
-actionBtn.addEventListener('click', () => {
-  if (!physicsMode) startGravity();
-  else resetCanvas();
-});
-
-function buildStrokeTile(stroke, strokeIndex){
-  const brush = BRUSHES[stroke.brush] || BRUSHES.pen;
-  const pts = stroke.points;
-  const pad = stroke.size * brush.widthMult + 4;
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  pts.forEach(p => {
-    minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
-    maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
-  });
-  minX -= pad; minY -= pad; maxX += pad; maxY += pad;
-  const w = Math.max(1, maxX - minX);
-  const h = Math.max(1, maxY - minY);
-
-  const tileCanvas = document.createElement('canvas');
-  tileCanvas.width = w;
-  tileCanvas.height = h;
-  const tctx = tileCanvas.getContext('2d');
-
-  renderStroke(tctx, stroke, minX, minY);
-
-  // bake in any eraser strokes drawn after this one, so what's erased on
-  // screen stays erased once this piece becomes its own falling tile
-  strokes.slice(strokeIndex + 1).forEach(later => {
-    if (later.brush === 'eraser') renderStroke(tctx, later, minX, minY);
-  });
-
-  return {
-    image: tileCanvas,
-    w, h,
-    cx: minX + w / 2,
-    cy: minY + h / 2
-  };
-}
-
-function startGravity(){
-  const drawable = strokes.filter(s => s.brush !== 'eraser');
-  if (drawable.length === 0 && images.length === 0) return;
-  physicsMode = true;
-
-  saveSubmission();
-
-  const { Engine, World, Bodies, Runner, Body } = Matter;
-  engine = Engine.create();
-  world = engine.world;
-  engine.gravity.y = 1;
-
-  const W = canvas.width, H = canvas.height;
-  const thickness = 200;
-  const ground = Bodies.rectangle(W / 2, H + thickness / 2 - 1, W * 2, thickness, { isStatic: true, friction: 0.9 });
-  const leftWall = Bodies.rectangle(-thickness / 2, H / 2, thickness, H * 4, { isStatic: true });
-  const rightWall = Bodies.rectangle(W + thickness / 2, H / 2, thickness, H * 4, { isStatic: true });
-  World.add(world, [ground, leftWall, rightWall]);
-
-  // all falling pieces share one negative collision group, which in Matter.js
-  // means they never collide with *each other* (but still land on the floor/
-  // walls) — so they overlap and pile up instead of jostling apart sideways
-  const PIECE_GROUP = -1;
-
-  tiles = strokes.map((stroke, i) => stroke.brush === 'eraser' ? null : { stroke, i })
-    .filter(Boolean)
-    .map(({ stroke, i }) => {
-    const t = buildStrokeTile(stroke, i);
-    const body = Bodies.rectangle(t.cx, t.cy, t.w, t.h, {
-      restitution: 0.2,
-      friction: 0.6,
-      frictionAir: 0.015,
-      density: 0.001,
-      collisionFilter: { group: PIECE_GROUP }
-    });
-    Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.18);
-    World.add(world, body);
-    return { body, image: t.image, w: t.w, h: t.h };
-  });
-
-  images.forEach(im => {
-    const body = Bodies.rectangle(im.x + im.w / 2, im.y + im.h / 2, im.w, im.h, {
-      restitution: 0.2,
-      friction: 0.6,
-      frictionAir: 0.015,
-      density: 0.001,
-      collisionFilter: { group: PIECE_GROUP }
-    });
-    Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.12);
-    World.add(world, body);
-    tiles.push({ body, image: im.img, w: im.w, h: im.h });
-  });
-
-  runner = Runner.create();
-  Runner.run(runner, engine);
-
-  toolbar.classList.add('hidden');
-  actionBtn.textContent = 'Refresh';
-  actionBtn.classList.add('refresh');
-
-  requestAnimationFrame(renderPhysics);
-}
-
-function renderPhysics(){
-  if (!physicsMode) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  tiles.forEach(tile => {
-    const { position, angle } = tile.body;
-    ctx.save();
-    ctx.translate(position.x, position.y);
-    ctx.rotate(angle);
-    ctx.drawImage(tile.image, -tile.w / 2, -tile.h / 2, tile.w, tile.h);
-    ctx.restore();
-  });
-  requestAnimationFrame(renderPhysics);
-}
-
-function resetCanvas(){
-  physicsMode = false;
-  if (runner) Matter.Runner.stop(runner);
-  if (engine) Matter.Engine.clear(engine);
-  tiles = [];
-  strokes = [];
-  images = [];
-  history = [];
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  toolbar.classList.remove('hidden');
-  actionBtn.textContent = 'Submit';
-  actionBtn.classList.remove('refresh');
-  setCursor(currentBrush);
-}
-
-/* =========================================================
-   FIREBASE — save a snapshot on submit, browse them in the gallery
-   ========================================================= */
-function saveSubmission(){
-  if (!window.fb){ console.warn('Firebase not ready yet'); return; }
-  // downscale before encoding so the database stays lightweight
-  const maxW = 480;
-  const scale = Math.min(1, maxW / canvas.width);
-  const snap = document.createElement('canvas');
-  snap.width = canvas.width * scale;
-  snap.height = canvas.height * scale;
-  snap.getContext('2d').drawImage(canvas, 0, 0, snap.width, snap.height);
-  const dataUrl = snap.toDataURL('image/jpeg', 0.7);
-
-  const { db, ref, push } = window.fb;
-  push(ref(db, 'submissions'), { image: dataUrl, ts: Date.now() })
-    .catch(err => console.error('Could not save submission:', err));
-}
-
-const galleryOverlay = document.getElementById('galleryOverlay');
-const galleryGrid = document.getElementById('galleryGrid');
-
-document.getElementById('galleryBtn').addEventListener('click', () => {
-  galleryOverlay.style.display = 'block';
-  loadGallery();
-});
-document.getElementById('galleryClose').addEventListener('click', () => {
-  galleryOverlay.style.display = 'none';
-});
-
-function loadGallery(){
-  galleryGrid.innerHTML = '<div class="gallery-empty">Loading…</div>';
-  if (!window.fb){ galleryGrid.innerHTML = '<div class="gallery-empty">Still connecting — try again in a moment.</div>'; return; }
-
-  const { db, ref, get, query, limitToLast } = window.fb;
-  get(query(ref(db, 'submissions'), limitToLast(60)))
-    .then(snapshot => {
-      const val = snapshot.val();
-      if (!val){ galleryGrid.innerHTML = '<div class="gallery-empty">Nothing submitted yet — be the first.</div>'; return; }
-      const items = Object.values(val).sort((a, b) => (b.ts || 0) - (a.ts || 0));
-      galleryGrid.innerHTML = '';
-      items.forEach(item => {
-        const cell = document.createElement('div');
-        cell.className = 'gallery-item';
-        const img = document.createElement('img');
-        img.src = item.image;
-        cell.appendChild(img);
-        galleryGrid.appendChild(cell);
+    /* brush type UI */
+    const brushesEl = document.getElementById('brushes');
+    Object.keys(BRUSHES).forEach(key => {
+      const b = document.createElement('button');
+      b.className = 'brush-btn' + (key === currentBrush ? ' active' : '');
+      b.textContent = BRUSHES[key].label;
+      b.addEventListener('click', () => {
+        currentBrush = key;
+        document.querySelectorAll('.brush-btn').forEach(el => el.classList.remove('active'));
+        b.classList.add('active');
+        if (!draggingImage) setCursor(currentBrush);
       });
-    })
-    .catch(err => {
-      console.error(err);
-      galleryGrid.innerHTML = '<div class="gallery-empty">Couldn\'t load the gallery right now.</div>';
+      brushesEl.appendChild(b);
     });
-}
 
-/* =========================================================
-   INIT
-   ========================================================= */
-resizeCanvas();
-setCursor(currentBrush);
-</script>
+    /* palette UI */
+    const swatchesEl = document.getElementById('swatches');
+    PALETTE.forEach((color, i) => {
+      const s = document.createElement('div');
+      s.className = 'swatch' + (i === 0 ? ' active' : '');
+      s.style.background = color;
+      s.addEventListener('click', () => {
+        currentColor = color;
+        document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
+        s.classList.add('active');
+      });
+      swatchesEl.appendChild(s);
+    });
+    document.getElementById('customColor').addEventListener('input', (e) => {
+      currentColor = e.target.value;
+      document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
+    });
+
+    /* brush size UI */
+    const SIZES = [3, 6, 12];
+    const sizesEl = document.getElementById('sizes');
+    SIZES.forEach((size, i) => {
+      const d = document.createElement('div');
+      d.className = 'size-dot' + (size === currentSize ? ' active' : '');
+      const px = 8 + size * 0.9;
+      d.style.width = px + 'px';
+      d.style.height = px + 'px';
+      d.addEventListener('click', () => {
+        currentSize = size;
+        document.querySelectorAll('.size-dot').forEach(el => el.classList.remove('active'));
+        d.classList.add('active');
+      });
+      sizesEl.appendChild(d);
+    });
+
+    /* =========================================================
+       POINTER DRAWING
+       ========================================================= */
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function scatterPoint(p, radius) {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random() * radius;
+      return { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r, a: 0.25 + Math.random() * 0.65, r: 0.4 + Math.random() * 1.1 };
+    }
+    function spraySpurt(stroke, p) {
+      const n = 22;
+      for (let i = 0; i < n; i++) stroke.points.push(scatterPoint(p, currentSize * 1.8));
+    }
+
+    function imageAt(pos) {
+      for (let i = images.length - 1; i >= 0; i--) {
+        const im = images[i];
+        if (pos.x >= im.x && pos.x <= im.x + im.w && pos.y >= im.y && pos.y <= im.y + im.h) return im;
+      }
+      return null;
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (physicsMode) return;
+      const p = getPos(e);
+      const hit = e.altKey ? imageAt(p) : null;
+      if (hit) {
+        draggingImage = hit;
+        dragOffset = { x: p.x - hit.x, y: p.y - hit.y };
+        canvas.style.cursor = 'grabbing';
+        return;
+      }
+      drawing = true;
+      currentStroke = { color: currentColor, size: currentSize, brush: currentBrush, points: [p] };
+      if (currentBrush === 'spray') spraySpurt(currentStroke, p);
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (physicsMode) return;
+      const p = getPos(e);
+
+      if (draggingImage) {
+        draggingImage.x = p.x - dragOffset.x;
+        draggingImage.y = p.y - dragOffset.y;
+        redrawAll();
+        return;
+      }
+
+      if (drawing) {
+        if (currentBrush === 'spray') spraySpurt(currentStroke, p);
+        else currentStroke.points.push(p);
+        liveRedraw();
+        return;
+      }
+
+      // hover feedback when nothing is happening — only hint "movable" while Alt is held
+      canvas.style.cursor = (e.altKey && imageAt(p)) ? 'grab' : (CURSORS[currentBrush] || 'crosshair');
+    });
+
+    function finishStroke() {
+      if (draggingImage) {
+        draggingImage = null;
+        setCursor(currentBrush);
+        return;
+      }
+      if (!drawing) return;
+      drawing = false;
+      if (currentStroke && currentStroke.points.length > 1) {
+        strokes.push(currentStroke);
+        history.push('stroke');
+      } else if (currentStroke) {
+        // treat a single click as a dot: duplicate the point
+        currentStroke.points.push({ x: currentStroke.points[0].x + 0.1, y: currentStroke.points[0].y });
+        strokes.push(currentStroke);
+        history.push('stroke');
+      }
+      currentStroke = null;
+      redrawAll();
+    }
+    window.addEventListener('pointerup', finishStroke);
+    window.addEventListener('pointercancel', finishStroke);
+
+    /* generic renderer: draws one stroke's points onto any 2D context, with an
+       optional coordinate offset (used when baking an isolated stroke tile) */
+    function renderStroke(targetCtx, stroke, offsetX, offsetY) {
+      offsetX = offsetX || 0; offsetY = offsetY || 0;
+      const brush = BRUSHES[stroke.brush] || BRUSHES.pen;
+      const pts = stroke.points;
+      if (pts.length < 2) return;
+
+      targetCtx.save();
+      targetCtx.globalAlpha = brush.alpha;
+      targetCtx.globalCompositeOperation = brush.blend;
+      targetCtx.strokeStyle = stroke.color;
+      targetCtx.fillStyle = stroke.color;
+      targetCtx.lineCap = brush.cap;
+      targetCtx.lineJoin = 'round';
+
+      if (brush.mode === 'dots') {
+        pts.forEach(p => {
+          const r = Math.max(0.35, stroke.size * 0.22 * (p.r || 1));
+          targetCtx.globalAlpha = brush.alpha * (p.a || 1);
+          targetCtx.beginPath();
+          targetCtx.arc(p.x - offsetX, p.y - offsetY, r, 0, Math.PI * 2);
+          targetCtx.fill();
+        });
+      } else if (brush.mode === 'chalk') {
+        // jitter is generated once per stroke and cached, so already-drawn
+        // chalk strokes stay put instead of re-randomizing (and visibly
+        // "shaking") on every redraw while a new stroke is being drawn
+        if (!stroke._jitter) {
+          stroke._jitter = [0, 1, 2].map(() => ({
+            jx: (Math.random() - 0.5) * stroke.size * 0.25,
+            jy: (Math.random() - 0.5) * stroke.size * 0.25
+          }));
+        }
+        const passes = 3;
+        for (let pass = 0; pass < passes; pass++) {
+          targetCtx.globalAlpha = brush.alpha / passes * 1.4;
+          targetCtx.lineWidth = Math.max(1, stroke.size * brush.widthMult * (0.6 + pass * 0.2));
+          targetCtx.beginPath();
+          const { jx, jy } = stroke._jitter[pass];
+          targetCtx.moveTo(pts[0].x - offsetX + jx, pts[0].y - offsetY + jy);
+          for (let i = 1; i < pts.length; i++) targetCtx.lineTo(pts[i].x - offsetX + jx, pts[i].y - offsetY + jy);
+          targetCtx.stroke();
+        }
+      } else {
+        // line & erase modes
+        targetCtx.lineWidth = Math.max(1, stroke.size * brush.widthMult);
+        targetCtx.beginPath();
+        targetCtx.moveTo(pts[0].x - offsetX, pts[0].y - offsetY);
+        for (let i = 1; i < pts.length; i++) targetCtx.lineTo(pts[i].x - offsetX, pts[i].y - offsetY);
+        targetCtx.stroke();
+      }
+      targetCtx.restore();
+    }
+
+    function drawImages(targetCtx) {
+      images.forEach(im => targetCtx.drawImage(im.img, im.x, im.y, im.w, im.h));
+    }
+
+    function liveRedraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawImages(ctx);
+      strokes.forEach(s => renderStroke(ctx, s));
+      if (currentStroke) renderStroke(ctx, currentStroke);
+    }
+
+    function redrawAll() {
+      if (physicsMode) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawImages(ctx);
+      strokes.forEach(s => renderStroke(ctx, s));
+    }
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (physicsMode) return;
+      strokes = [];
+      images = [];
+      history = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (physicsMode) return;
+      const last = history.pop();
+      if (last === 'image') images.pop();
+      else if (last === 'stroke') strokes.pop();
+      redrawAll();
+    });
+
+    document.getElementById('importBtn').addEventListener('click', () => {
+      if (physicsMode) return;
+      document.getElementById('imageInput').click();
+    });
+    document.getElementById('imageInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = Math.min(canvas.width, canvas.height) * 0.35;
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = img.width * scale, h = img.height * scale;
+          images.push({
+            img,
+            x: canvas.width / 2 - w / 2 + (Math.random() - 0.5) * 40,
+            y: canvas.height / 2 - h / 2 + (Math.random() - 0.5) * 40,
+            w, h
+          });
+          history.push('image');
+          redrawAll();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    });
+
+    /* =========================================================
+       GRAVITY MODE
+       ========================================================= */
+    const actionBtn = document.getElementById('action-btn');
+    const toolbar = document.getElementById('toolbar');
+    let engine, runner, world;
+    let tiles = []; // {body, image, w, h}
+
+    actionBtn.addEventListener('click', () => {
+      if (!physicsMode) startGravity();
+      else resetCanvas();
+    });
+
+    function buildStrokeTile(stroke, strokeIndex) {
+      const brush = BRUSHES[stroke.brush] || BRUSHES.pen;
+      const pts = stroke.points;
+      const pad = stroke.size * brush.widthMult + 4;
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      pts.forEach(p => {
+        minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+        maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+      });
+      minX -= pad; minY -= pad; maxX += pad; maxY += pad;
+      const w = Math.max(1, maxX - minX);
+      const h = Math.max(1, maxY - minY);
+
+      const tileCanvas = document.createElement('canvas');
+      tileCanvas.width = w;
+      tileCanvas.height = h;
+      const tctx = tileCanvas.getContext('2d');
+
+      renderStroke(tctx, stroke, minX, minY);
+
+      // bake in any eraser strokes drawn after this one, so what's erased on
+      // screen stays erased once this piece becomes its own falling tile
+      strokes.slice(strokeIndex + 1).forEach(later => {
+        if (later.brush === 'eraser') renderStroke(tctx, later, minX, minY);
+      });
+
+      return {
+        image: tileCanvas,
+        w, h,
+        cx: minX + w / 2,
+        cy: minY + h / 2
+      };
+    }
+
+    function startGravity() {
+      const drawable = strokes.filter(s => s.brush !== 'eraser');
+      if (drawable.length === 0 && images.length === 0) return;
+      physicsMode = true;
+
+      saveSubmission();
+
+      const { Engine, World, Bodies, Runner, Body } = Matter;
+      engine = Engine.create();
+      world = engine.world;
+      engine.gravity.y = 1;
+
+      const W = canvas.width, H = canvas.height;
+      const thickness = 200;
+      const ground = Bodies.rectangle(W / 2, H + thickness / 2 - 1, W * 2, thickness, { isStatic: true, friction: 0.9 });
+      const leftWall = Bodies.rectangle(-thickness / 2, H / 2, thickness, H * 4, { isStatic: true });
+      const rightWall = Bodies.rectangle(W + thickness / 2, H / 2, thickness, H * 4, { isStatic: true });
+      World.add(world, [ground, leftWall, rightWall]);
+
+      // all falling pieces share one negative collision group, which in Matter.js
+      // means they never collide with *each other* (but still land on the floor/
+      // walls) — so they overlap and pile up instead of jostling apart sideways
+      const PIECE_GROUP = -1;
+
+      tiles = strokes.map((stroke, i) => stroke.brush === 'eraser' ? null : { stroke, i })
+        .filter(Boolean)
+        .map(({ stroke, i }) => {
+          const t = buildStrokeTile(stroke, i);
+          const body = Bodies.rectangle(t.cx, t.cy, t.w, t.h, {
+            restitution: 0.2,
+            friction: 0.6,
+            frictionAir: 0.015,
+            density: 0.001,
+            collisionFilter: { group: PIECE_GROUP }
+          });
+          Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.18);
+          World.add(world, body);
+          return { body, image: t.image, w: t.w, h: t.h };
+        });
+
+      images.forEach(im => {
+        const body = Bodies.rectangle(im.x + im.w / 2, im.y + im.h / 2, im.w, im.h, {
+          restitution: 0.2,
+          friction: 0.6,
+          frictionAir: 0.015,
+          density: 0.001,
+          collisionFilter: { group: PIECE_GROUP }
+        });
+        Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.12);
+        World.add(world, body);
+        tiles.push({ body, image: im.img, w: im.w, h: im.h });
+      });
+
+      runner = Runner.create();
+      Runner.run(runner, engine);
+
+      toolbar.classList.add('hidden');
+      actionBtn.textContent = 'Refresh';
+      actionBtn.classList.add('refresh');
+
+      requestAnimationFrame(renderPhysics);
+    }
+
+    function renderPhysics() {
+      if (!physicsMode) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      tiles.forEach(tile => {
+        const { position, angle } = tile.body;
+        ctx.save();
+        ctx.translate(position.x, position.y);
+        ctx.rotate(angle);
+        ctx.drawImage(tile.image, -tile.w / 2, -tile.h / 2, tile.w, tile.h);
+        ctx.restore();
+      });
+      requestAnimationFrame(renderPhysics);
+    }
+
+    function resetCanvas() {
+      physicsMode = false;
+      if (runner) Matter.Runner.stop(runner);
+      if (engine) Matter.Engine.clear(engine);
+      tiles = [];
+      strokes = [];
+      images = [];
+      history = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      toolbar.classList.remove('hidden');
+      actionBtn.textContent = 'Submit';
+      actionBtn.classList.remove('refresh');
+      setCursor(currentBrush);
+    }
+
+    /* =========================================================
+       FIREBASE — save a snapshot on submit, browse them in the gallery
+       ========================================================= */
+    function saveSubmission() {
+      if (!window.fb) { console.warn('Firebase not ready yet'); return; }
+      // downscale before encoding so the database stays lightweight
+      const maxW = 480;
+      const scale = Math.min(1, maxW / canvas.width);
+      const snap = document.createElement('canvas');
+      snap.width = canvas.width * scale;
+      snap.height = canvas.height * scale;
+      snap.getContext('2d').drawImage(canvas, 0, 0, snap.width, snap.height);
+      const dataUrl = snap.toDataURL('image/jpeg', 0.7);
+
+      const { db, ref, push } = window.fb;
+      push(ref(db, 'submissions'), { image: dataUrl, ts: Date.now() })
+        .catch(err => console.error('Could not save submission:', err));
+    }
+
+    const galleryOverlay = document.getElementById('galleryOverlay');
+    const galleryGrid = document.getElementById('galleryGrid');
+
+    document.getElementById('galleryBtn').addEventListener('click', () => {
+      galleryOverlay.style.display = 'block';
+      loadGallery();
+    });
+    document.getElementById('galleryClose').addEventListener('click', () => {
+      galleryOverlay.style.display = 'none';
+    });
+
+    function loadGallery() {
+      galleryGrid.innerHTML = '<div class="gallery-empty">Loading…</div>';
+      if (!window.fb) { galleryGrid.innerHTML = '<div class="gallery-empty">Still connecting — try again in a moment.</div>'; return; }
+
+      const { db, ref, get, query, limitToLast } = window.fb;
+      get(query(ref(db, 'submissions'), limitToLast(60)))
+        .then(snapshot => {
+          const val = snapshot.val();
+          if (!val) { galleryGrid.innerHTML = '<div class="gallery-empty">Nothing submitted yet — be the first.</div>'; return; }
+          const items = Object.values(val).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+          galleryGrid.innerHTML = '';
+          items.forEach(item => {
+            const cell = document.createElement('div');
+            cell.className = 'gallery-item';
+            const img = document.createElement('img');
+            img.src = item.image;
+            cell.appendChild(img);
+            galleryGrid.appendChild(cell);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          galleryGrid.innerHTML = '<div class="gallery-empty">Couldn\'t load the gallery right now.</div>';
+        });
+    }
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    resizeCanvas();
+    setCursor(currentBrush);
+  </script>
+  <div id="chatbot">
+
+    <div id="chat-header">
+      PORTFOLIO ASSISTANT
+    </div>
+
+    <div id="chat-messages">
+      <div class="bot">
+        Hi. Ask me anything about this project.
+      </div>
+    </div>
+
+    <div id="chat-input-area">
+      <input id="chat-input" type="text" placeholder="Ask something...">
+
+      <button id="send-btn">
+        Send
+      </button>
+    </div>
+
+  </div>
+
+  <script src="chatbot.js"></script>
+
+
 </body>
+
 </html>
