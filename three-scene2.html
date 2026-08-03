@@ -26,6 +26,34 @@
             color: #f2f2f2;
         }
 
+        body {
+            position: relative;
+        }
+
+        .canvas-intro {
+            position: fixed;
+            top: calc(var(--site-nav-height, 48px) + 14px);
+            left: clamp(20px, 4vw, 48px);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .canvas-intro p {
+            margin: 0;
+            font-size: clamp(0.68rem, 1.3vw, 0.78rem);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.48);
+            line-height: 1.55;
+        }
+
+        .canvas-intro .canvas-hint {
+            margin-top: 6px;
+            font-size: clamp(0.58rem, 1.1vw, 0.66rem);
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.32);
+        }
+
         canvas {
             display: block;
         }
@@ -33,6 +61,11 @@
 </head>
 
 <body>
+    <div class="canvas-intro">
+        <p>Art on/as objects</p>
+        <p class="canvas-hint">Orbit / zoom in</p>
+    </div>
+
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="scene2.js"></script>
