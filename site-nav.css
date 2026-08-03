@@ -37,7 +37,7 @@ body.has-site-nav.page-landing {
   height: var(--site-nav-height);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 100%;
   gap: clamp(8px, 1vw, 16px);
   padding: 0 clamp(16px, 2.5vw, 36px);
@@ -48,7 +48,7 @@ body.has-site-nav.page-landing {
 }
 
 .site-nav a {
-  flex: 0 1 auto;
+  flex: 1;
   text-align: center;
   color: rgba(242, 242, 242, 0.88);
   text-decoration: none;
@@ -67,15 +67,15 @@ body.has-site-nav.page-landing {
   color: #c8c2b8;
 }
 
+body.has-site-nav .back-btn:not(.back-btn--inline) {
+  top: calc(var(--site-nav-height) + 10px);
+}
+
 body.has-site-nav.page-geospatial .site-nav {
   background: rgba(6, 6, 6, 0.28);
   backdrop-filter: blur(12px);
   box-shadow: none;
   border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-body.has-site-nav .back-btn:not(.back-btn--inline) {
-  top: calc(var(--site-nav-height) + 10px);
 }
 
 body.has-site-nav header {

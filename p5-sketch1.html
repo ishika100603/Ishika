@@ -3,120 +3,252 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Canvas.1</title>
-    <link rel="stylesheet" href="site-back.css">
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <style>
+        :root {
+            --tile-gap: clamp(20px, 3vw, 36px);
+            --border-offset: 7px;
+            --border-color: rgba(170, 170, 170, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
+            min-height: 100vh;
             background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: #f2f2f2;
+            padding-top: calc(var(--site-nav-height, 48px) + 24px);
+            padding-bottom: 48px;
         }
 
-        header {
+        .art-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(20px, 4vw, 48px);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: var(--tile-gap);
+        }
+
+        @media (min-width: 900px) {
+            .art-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+
+        .art-tile {
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+
+        .art-tile::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--border-color);
+            transform: translate(var(--border-offset), var(--border-offset));
+            pointer-events: none;
+            z-index: 0;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .art-tile:hover::before,
+        .art-tile:focus-within::before {
+            transform: translate(calc(var(--border-offset) + 2px), calc(var(--border-offset) + 2px));
+            border-color: rgba(210, 210, 210, 0.75);
+        }
+
+        .art-tile__inner {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            background: #000;
-            color: #fff;
-            padding: 20px 40px;
-            box-sizing: border-box;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .art-tile__inner img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease, opacity 0.25s ease;
+        }
+
+        .art-tile:hover .art-tile__inner img,
+        .art-tile:focus-within .art-tile__inner img {
+            transform: scale(1.04);
+            opacity: 0.88;
+        }
+
+        .art-soon {
+            position: relative;
+            aspect-ratio: 1;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-top: var(--site-nav-height, 48px);
+            justify-content: center;
+            padding: 16px;
         }
 
-        header a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            letter-spacing: 1px;
+        .art-soon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(120, 120, 120, 0.35);
+            transform: translate(var(--border-offset), var(--border-offset));
+            pointer-events: none;
         }
 
-        h1 {
-            font-size: 18px;
-            letter-spacing: 3px;
-            margin: 0;
+        .art-soon span {
+            position: relative;
+            z-index: 1;
+            font-size: clamp(0.62rem, 1.1vw, 0.76rem);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.42);
+            text-align: center;
+            line-height: 1.65;
+            max-width: 11ch;
+        }
+
+        #art-preview {
+            position: fixed;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            padding: 12px;
+            background: rgba(8, 8, 8, 0.92);
+            border: 1px solid rgba(180, 180, 180, 0.45);
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, 0.65),
+                var(--border-offset) var(--border-offset) 0 rgba(120, 120, 120, 0.18);
+            backdrop-filter: blur(10px);
+        }
+
+        #art-preview.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #art-preview img {
+            display: block;
+            max-width: min(520px, 72vw);
+            max-height: min(680px, 78vh);
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
     </style>
 </head>
 
 <body>
-    <a href="index.html" class="back-btn">← BACK</a>
-    <header>
-        <h1>2D CANVAS.1</h1>
-    </header>
+    <main class="art-grid" id="art-grid" aria-label="Artwork grid"></main>
 
+    <div id="art-preview" aria-hidden="true">
+        <img alt="">
+    </div>
+
+    <script src="canvas1-artworks.js"></script>
     <script>
-        function setup() {
-            createCanvas(800, 600);
-            noLoop();
-        }
+        (function () {
+            const grid = document.getElementById('art-grid');
+            const preview = document.getElementById('art-preview');
+            const previewImg = preview.querySelector('img');
+            const artworks = window.CANVAS1_ARTWORKS || [];
+            let activeTile = null;
 
-        function draw() {
-            background(10, 8, 20);
+            artworks.forEach((src, index) => {
+                const tile = document.createElement('article');
+                tile.className = 'art-tile';
+                tile.tabIndex = 0;
+                tile.setAttribute('aria-label', `Artwork ${index + 1}`);
 
-            // Gradient sky
-            noStroke();
-            for (let y = 0; y < 400; y++) {
-                let t = y / 400;
-                let r = lerp(15, 140, t);
-                let g = lerp(10, 80, t);
-                let b = lerp(35, 60, t);
-                fill(r, g, b);
-                rect(0, y, width, 1);
+                const inner = document.createElement('div');
+                inner.className = 'art-tile__inner';
+
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Artwork ${index + 1}`;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+
+                inner.appendChild(img);
+                tile.appendChild(inner);
+                grid.appendChild(tile);
+
+                tile.addEventListener('mouseenter', () => showPreview(tile, src));
+                tile.addEventListener('focus', () => showPreview(tile, src));
+                tile.addEventListener('mouseleave', hidePreview);
+                tile.addEventListener('blur', hidePreview);
+            });
+
+            const soon = document.createElement('div');
+            soon.className = 'art-soon';
+            soon.setAttribute('aria-hidden', 'true');
+            soon.innerHTML = '<span>More coming soon</span>';
+            grid.appendChild(soon);
+
+            function showPreview(tile, src) {
+                activeTile = tile;
+                previewImg.src = src;
+                preview.classList.add('is-visible');
+                preview.setAttribute('aria-hidden', 'false');
+                positionPreview(tile);
             }
 
-            // Melting clock
-            push();
-            translate(600, 300);
-            fill(200, 170, 90);
-            stroke(70, 55, 25);
-            strokeWeight(3);
-            beginShape();
-            vertex(-70, -70);
-            bezierVertex(50, -90, 100, -30, 70, 40);
-            bezierVertex(50, 100, -10, 160, -60, 130);
-            bezierVertex(-110, 100, -100, 20, -70, -70);
-            endShape(CLOSE);
-            pop();
-
-            // Melting portrait blob
-            push();
-            translate(220, 260);
-            fill(50, 75, 120);
-            stroke(15, 25, 50);
-            strokeWeight(4);
-            beginShape();
-            vertex(-100, -130);
-            bezierVertex(30, -160, 120, -90, 100, 10);
-            bezierVertex(85, 110, -20, 160, -110, 100);
-            bezierVertex(-170, 55, -145, -85, -100, -130);
-            endShape(CLOSE);
-            noStroke();
-            fill(220, 205, 175);
-            ellipse(-15, -40, 45, 45);
-            fill(90, 65, 45);
-            rect(-45, 5, 65, 95, 12);
-            pop();
-
-            // Floating orbs with shadows
-            for (let i = 0; i < 5; i++) {
-                push();
-                let ex = 60 + i * 150;
-                let ey = 500;
-                fill(0, 0, 0, 90);
-                ellipse(ex + 40, ey + 60, 70, 15);
-                fill(230, 220, 195);
-                stroke(90, 80, 60);
-                strokeWeight(2);
-                ellipse(ex, ey, 45, 65);
-                pop();
+            function hidePreview() {
+                activeTile = null;
+                preview.classList.remove('is-visible');
+                preview.setAttribute('aria-hidden', 'true');
             }
-        }
+
+            function positionPreview(tile) {
+                const rect = tile.getBoundingClientRect();
+                const margin = 16;
+
+                previewImg.onload = () => {
+                    if (activeTile !== tile) return;
+
+                    const previewRect = preview.getBoundingClientRect();
+                    let left = rect.right + margin;
+                    let top = rect.top + rect.height / 2 - previewRect.height / 2;
+
+                    if (left + previewRect.width > window.innerWidth - margin) {
+                        left = rect.left - previewRect.width - margin;
+                    }
+                    if (left < margin) {
+                        left = Math.max(margin, (window.innerWidth - previewRect.width) / 2);
+                    }
+
+                    top = Math.max(margin, Math.min(top, window.innerHeight - previewRect.height - margin));
+
+                    preview.style.left = `${left}px`;
+                    preview.style.top = `${top}px`;
+                };
+
+                if (previewImg.complete) {
+                    previewImg.onload();
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                if (activeTile) positionPreview(activeTile);
+            }, { passive: true });
+
+            window.addEventListener('resize', () => {
+                if (activeTile) positionPreview(activeTile);
+            });
+        })();
     </script>
     <script src="site-nav.js"></script>
     <script src="site-chat.js"></script>

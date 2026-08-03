@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Canvas.1</title>
-    <link rel="stylesheet" href="site-back.css">
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
     <style>
@@ -31,46 +30,129 @@
             position: relative;
         }
 
-        .topbar {
+        .canvas-intro {
             position: fixed;
-            top: 16px;
-            left: 16px;
+            top: calc(var(--site-nav-height, 48px) + 14px);
+            left: clamp(20px, 4vw, 48px);
+            transform: none;
             z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 10px 14px;
+            text-align: left;
+            max-width: min(340px, 46vw);
+            pointer-events: none;
+        }
+
+        .canvas-intro h2 {
+            margin: 0 0 8px;
+            font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .canvas-intro p {
+            margin: 0;
+            font-size: clamp(0.68rem, 1.3vw, 0.78rem);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.48);
+            line-height: 1.55;
+        }
+
+        #duplicate-btn {
+            pointer-events: all;
+            margin-top: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
             background: rgba(10, 10, 10, 0.72);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-        }
-
-        .topbar a {
-            color: #8ec5ff;
-            text-decoration: none;
-            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.82);
+            padding: 8px 12px;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
 
-        .topbar a:hover {
-            color: #ffffff;
+        #duplicate-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        #duplicate-btn:disabled {
+            opacity: 0.4;
+            cursor: default;
         }
 
         canvas {
             display: block;
         }
+
+        .hint {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 8px 14px;
+            font-size: 0.52rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(8, 8, 8, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            pointer-events: none;
+            max-width: min(920px, 94vw);
+            line-height: 1.5;
+        }
+
+        .hint-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: center;
+        }
+
+        .hint-list li {
+            margin: 0;
+        }
+
+        .hint strong {
+            color: rgba(255, 255, 255, 0.78);
+            font-weight: 500;
+        }
+
+        @media (max-width: 720px) {
+            .canvas-intro {
+                left: clamp(16px, 4vw, 24px);
+                max-width: min(280px, 78vw);
+            }
+        }
     </style>
 </head>
 
 <body>
-    <a href="index.html" class="back-btn">← BACK</a>
-    <div class="topbar">
-        <strong style="font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;">3D Canvas.1</strong>
+    <div class="canvas-intro">
+        <h2>Our art, but your art too</h2>
+        <p>You can consider them your lego set</p>
+        <button type="button" id="duplicate-btn" disabled>Duplicate block</button>
+    </div>
+
+    <div class="hint" aria-label="Canvas controls">
+        <ul class="hint-list">
+            <li><strong>Double left-click</strong> or <strong>D</strong> · duplicate · <strong>Left-click + drag</strong> canvas · orbit · <strong>Scroll</strong> · zoom · <strong>Right-click + drag</strong> · pan</li>
+            <li><strong>Ctrl + left-click + drag</strong> block · lift / lower · <strong>Left-click + drag</strong> block · move on X / Z · <strong>Shift + left-click + drag</strong> · rotate</li>
+        </ul>
     </div>
 
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/objects/Reflector.js"></script>
+    <script src="canvas3-cubes.js"></script>
     <script src="scene1.js"></script>
     <script src="site-nav.js"></script>
     <script src="site-chat.js"></script>
