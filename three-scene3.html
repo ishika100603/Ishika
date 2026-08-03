@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Canvas.3</title>
+    <link rel="stylesheet" href="site-chat.css">
+    <link rel="stylesheet" href="site-nav.css">
+    <link rel="stylesheet" href="canvas-base.css">
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            min-height: 100%;
+            background: #000;
+            color: #f2f2f2;
+            overflow: hidden;
+        }
+
+        body {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: calc(var(--site-nav-height, 48px) + 24px) 24px 32px;
+            background: #000;
+        }
+
+        .video-stage {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .video-frame video {
+            display: block;
+            width: min(220px, 42vw);
+            height: auto;
+            background: #000;
+        }
+
+        .video-caption {
+            margin: 0;
+            font-size: clamp(0.58rem, 1.1vw, 0.66rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.32);
+            text-align: center;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body class="has-canvas-base">
+    <div class="canvas-base" aria-hidden="true"></div>
+
+    <main class="video-stage" aria-label="3D Canvas.3 video">
+        <div class="video-frame">
+            <video
+                id="canvas3-video"
+                src="canvas3-video/scene-video.mp4"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-label="3D canvas video">
+            </video>
+        </div>
+        <p class="video-caption">Art that feels real</p>
+    </main>
+
+    <script>
+        (function () {
+            const video = document.getElementById('canvas3-video');
+            if (!video) return;
+
+            const playVideo = () => {
+                const attempt = video.play();
+                if (attempt && typeof attempt.catch === 'function') {
+                    attempt.catch(() => {});
+                }
+            };
+
+            video.addEventListener('loadeddata', playVideo);
+            if (video.readyState >= 2) playVideo();
+            else playVideo();
+        })();
+    </script>
+    <script src="site-nav.js"></script>
+    <script src="site-chat.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+
+</html>

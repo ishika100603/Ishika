@@ -1,0 +1,23 @@
+/* Opaque black layer behind every canvas experience */
+html {
+    background: #000;
+}
+
+body.has-canvas-base {
+    background: #000;
+}
+
+.canvas-base {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 0;
+    pointer-events: none;
+}
+
+body.has-canvas-base canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: #000 !important;
+}

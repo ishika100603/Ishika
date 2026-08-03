@@ -7,6 +7,7 @@
     <title>2D Canvas.2</title>
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
+    <link rel="stylesheet" href="canvas-base.css">
     <style>
         :root {
             color-scheme: dark;
@@ -195,7 +196,9 @@
     </style>
 </head>
 
-<body>
+<body class="has-canvas-base">
+    <div class="canvas-base" aria-hidden="true"></div>
+
     <button type="button" id="speed-2x-btn" aria-pressed="false">2× Speed</button>
 
     <div class="page">

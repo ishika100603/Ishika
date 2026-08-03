@@ -7,6 +7,7 @@
     <title>2D Canvas.1</title>
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
+    <link rel="stylesheet" href="canvas-base.css">
     <style>
         :root {
             --tile-gap: clamp(20px, 3vw, 36px);
@@ -151,7 +152,9 @@
     </style>
 </head>
 
-<body>
+<body class="has-canvas-base">
+    <div class="canvas-base" aria-hidden="true"></div>
+
     <main class="art-grid" id="art-grid" aria-label="Artwork grid"></main>
 
     <div id="art-preview" aria-hidden="true">

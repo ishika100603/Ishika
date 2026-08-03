@@ -27,10 +27,20 @@
     );
     camera.lookAt(viewTarget);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 1);
     renderer.outputEncoding = THREE.sRGBEncoding;
+
+    if (!document.querySelector('.canvas-base')) {
+        const base = document.createElement('div');
+        base.className = 'canvas-base';
+        base.setAttribute('aria-hidden', 'true');
+        document.body.prepend(base);
+        document.body.classList.add('has-canvas-base');
+    }
+
     document.body.appendChild(renderer.domElement);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);

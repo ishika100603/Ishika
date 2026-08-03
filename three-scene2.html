@@ -7,6 +7,7 @@
     <title>3D Canvas.2</title>
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
+    <link rel="stylesheet" href="canvas-base.css">
     <style>
         :root {
             color-scheme: dark;
@@ -28,6 +29,7 @@
 
         body {
             position: relative;
+            background: #000;
         }
 
         .canvas-intro {
@@ -53,14 +55,12 @@
             letter-spacing: 0.14em;
             color: rgba(255, 255, 255, 0.32);
         }
-
-        canvas {
-            display: block;
-        }
     </style>
 </head>
 
-<body>
+<body class="has-canvas-base">
+    <div class="canvas-base" aria-hidden="true"></div>
+
     <div class="canvas-intro">
         <p>Art on/as objects</p>
         <p class="canvas-hint">Orbit / zoom in</p>
