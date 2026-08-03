@@ -15,7 +15,7 @@ body.has-canvas-base {
     pointer-events: none;
 }
 
-body.has-canvas-base canvas {
+body.has-canvas-base > canvas {
     position: fixed;
     inset: 0;
     z-index: 1;

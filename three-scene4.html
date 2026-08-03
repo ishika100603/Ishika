@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Canvas.3</title>
+    <title>3D Canvas.4</title>
     <link rel="stylesheet" href="site-chat.css">
     <link rel="stylesheet" href="site-nav.css">
     <link rel="stylesheet" href="canvas-base.css">
@@ -41,39 +41,36 @@
             bottom: 0;
             z-index: 3;
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .video-stack {
-            display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            transform: translateY(calc((10px + 1lh) / -2));
+            justify-content: center;
+            background: #000;
         }
 
         .video-frame {
-            flex: 0 0 auto;
+            width: 100%;
+            height: 100%;
         }
 
         .video-frame canvas {
             display: block;
-            width: min(220px, 42vw);
-            height: auto;
+            width: 100%;
+            height: 100%;
             background: #000;
         }
 
         .video-caption {
+            position: absolute;
+            left: clamp(20px, 4vw, 48px);
+            bottom: 20px;
             margin: 0;
-            flex: 0 0 auto;
             font-size: clamp(0.58rem, 1.1vw, 0.66rem);
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.32);
-            text-align: center;
+            text-align: left;
             line-height: 1.5;
-            white-space: nowrap;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -81,28 +78,26 @@
 <body class="has-canvas-base">
     <div class="canvas-base" aria-hidden="true"></div>
 
-    <main class="video-stage" aria-label="3D Canvas.3 video">
-        <div class="video-stack">
-            <div class="video-frame">
-                <canvas id="canvas3-display" aria-hidden="true"></canvas>
-                <video
-                    id="canvas3-video"
-                    src="canvas3-video/scene-video.mp4"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    preload="auto"
-                    aria-label="3D canvas video">
-                </video>
-            </div>
-            <p class="video-caption">Art that feels real</p>
+    <main class="video-stage" aria-label="3D Canvas.4 video">
+        <div class="video-frame">
+            <canvas id="canvas4-display" aria-hidden="true"></canvas>
+            <video
+                id="canvas4-video"
+                src="canvas4-video/scene-video.mp4"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-label="3D canvas video">
+            </video>
         </div>
+        <p class="video-caption">Art that feels alive</p>
     </main>
 
     <script src="canvas-video.js"></script>
     <script>
-        mountCanvasVideo({ videoId: 'canvas3-video', canvasId: 'canvas3-display', small: true });
+        mountCanvasVideo({ videoId: 'canvas4-video', canvasId: 'canvas4-display' });
     </script>
     <script src="site-nav.js"></script>
     <script src="site-chat.js"></script>
