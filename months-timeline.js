@@ -44,7 +44,7 @@
     .append('rect')
     .attr('width', 4)
     .attr('height', 4)
-    .attr('fill', '#d8d8d6');
+    .attr('fill', '#000');
 
   defs.append('filter')
     .attr('id', 'soft-shadow')
@@ -52,7 +52,11 @@
     .attr('dx', 0)
     .attr('dy', 2)
     .attr('stdDeviation', 4)
-    .attr('flood-opacity', 0.18);
+    .attr('flood-opacity', 0.35);
+
+  const GLOBE_STROKE = '#e2e2e2';
+  const GLOBE_DOT = '#f0f0f0';
+  const LABEL_FILL = '#f2f2f2';
 
   svg.append('rect')
     .attr('width', width)
@@ -63,6 +67,13 @@
   const cardsLayer = svg.append('g').attr('class', 'cards-layer');
   const labelsLayer = svg.append('g').attr('class', 'labels-layer');
 
+  function focusOpacity(d, minOpacity) {
+    const depthFocus = Math.max(0, d.depth);
+    const scrollFocus = Math.exp(-Math.abs(d.rel) * 0.55);
+    const focus = depthFocus * scrollFocus;
+    return minOpacity + (1 - minOpacity) * focus;
+  }
+
   function layoutMonth(index, scroll) {
     const rel = index - scroll;
     const angle = rel * ROW_ANGLE;
@@ -72,7 +83,7 @@
     const halfWidth = BASE_HALF_WIDTH * scale;
     const backY = y - DEPTH_OFFSET * scale;
     const backHalfWidth = halfWidth * 0.7;
-    const opacity = depth < -0.15 ? 0.12 : 0.2 + 0.8 * Math.max(0, (depth + 0.15) / 1.15);
+    const opacity = depth < -0.15 ? 0.38 : 0.5 + 0.5 * Math.max(0, (depth + 0.15) / 1.15);
 
     return {
       index,
@@ -104,26 +115,26 @@
     gridLayer.append('path')
       .attr('d', spine(leftFront))
       .attr('fill', 'none')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1.1);
+      .attr('stroke', GLOBE_STROKE)
+      .attr('stroke-width', 1.35);
 
     gridLayer.append('path')
       .attr('d', spine(leftBack))
       .attr('fill', 'none')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1.1);
+      .attr('stroke', GLOBE_STROKE)
+      .attr('stroke-width', 1.35);
 
     gridLayer.append('path')
       .attr('d', spine(rightFront))
       .attr('fill', 'none')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1.1);
+      .attr('stroke', GLOBE_STROKE)
+      .attr('stroke-width', 1.35);
 
     gridLayer.append('path')
       .attr('d', spine(rightBack))
       .attr('fill', 'none')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1.1);
+      .attr('stroke', GLOBE_STROKE)
+      .attr('stroke-width', 1.35);
 
     visible.forEach(d => {
       const g = gridLayer.append('g').attr('opacity', d.opacity);
@@ -133,16 +144,16 @@
         .attr('y1', d.y)
         .attr('x2', cx + d.halfWidth)
         .attr('y2', d.y)
-        .attr('stroke', '#111')
-        .attr('stroke-width', 1.1);
+        .attr('stroke', GLOBE_STROKE)
+        .attr('stroke-width', 1.35);
 
       g.append('line')
         .attr('x1', cx - d.backHalfWidth)
         .attr('y1', d.backY)
         .attr('x2', cx + d.backHalfWidth)
         .attr('y2', d.backY)
-        .attr('stroke', '#111')
-        .attr('stroke-width', 1.1);
+        .attr('stroke', GLOBE_STROKE)
+        .attr('stroke-width', 1.35);
 
       const corners = [
         [cx - d.halfWidth, d.y],
@@ -158,8 +169,8 @@
           .attr('y1', y)
           .attr('x2', next[0])
           .attr('y2', next[1])
-          .attr('stroke', '#111')
-          .attr('stroke-width', 1.1);
+          .attr('stroke', GLOBE_STROKE)
+          .attr('stroke-width', 1.35);
       });
 
       corners.forEach(([x, y]) => {
@@ -167,7 +178,7 @@
           .attr('cx', x)
           .attr('cy', y)
           .attr('r', 3.2)
-          .attr('fill', '#111');
+          .attr('fill', GLOBE_DOT);
       });
     });
   }
@@ -185,7 +196,7 @@
       const cardHeight = 90 + 240 * Math.max(0, d.depth);
       const x = cx - cardWidth / 2;
       const y = d.y - cardHeight / 2;
-      const cardOpacity = d.depth < -0.1 ? 0.08 : 0.25 + 0.75 * Math.max(0, (d.depth + 0.1) / 1.1);
+      const cardOpacity = focusOpacity(d, 0.28);
 
       const g = cardsLayer.append('g')
         .attr('opacity', cardOpacity)
@@ -214,7 +225,7 @@
           .attr('x', cx)
           .attr('y', d.y + 5)
           .attr('text-anchor', 'middle')
-          .attr('fill', 'rgba(0,0,0,0.35)')
+          .attr('fill', 'rgba(240,240,240,0.55)')
           .attr('font-size', 11)
           .attr('letter-spacing', 2)
           .text(month.label);
@@ -231,8 +242,9 @@
         labelsLayer.append('text')
           .attr('x', cx + d.halfWidth + 42)
           .attr('y', d.y + 4)
-          .attr('fill', '#111')
-          .attr('font-size', 13)
+          .attr('fill', LABEL_FILL)
+          .attr('font-size', 14)
+          .attr('font-weight', 500)
           .attr('letter-spacing', 3)
           .attr('opacity', d.opacity)
           .text(d.label);

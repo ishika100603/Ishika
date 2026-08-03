@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monthly Timeline</title>
+  <title>Timeline</title>
+  <link rel="stylesheet" href="site-back.css">
+  <link rel="stylesheet" href="site-chat.css">
+  <link rel="stylesheet" href="site-nav.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #d8d8d6;
-      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #000;
       overflow: hidden;
       height: 100vh;
     }
 
     header {
       position: fixed;
-      top: 0;
+      top: var(--site-nav-height, 48px);
       left: 0;
       right: 0;
       z-index: 10;
@@ -25,20 +27,20 @@
       justify-content: space-between;
       align-items: center;
       padding: 18px 36px;
-      background: rgba(255, 255, 255, 0.55);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     header h1 {
       font-size: 13px;
       letter-spacing: 4px;
       font-weight: 500;
-      color: #111;
+      color: #f0f0f0;
     }
 
     header a {
-      color: #111;
+      color: #f0f0f0;
       text-decoration: none;
       font-size: 12px;
       letter-spacing: 2px;
@@ -55,11 +57,10 @@
     #scroll-hint {
       position: fixed;
       bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 36px;
       font-size: 10px;
       letter-spacing: 3px;
-      color: rgba(0, 0, 0, 0.35);
+      color: rgba(255, 255, 255, 0.35);
       pointer-events: none;
       z-index: 10;
     }
@@ -68,12 +69,15 @@
   </style>
 </head>
 <body>
+  <a href="index.html" class="back-btn">← BACK</a>
   <header>
-    <h1>MONTHLY TIMELINE</h1>
-    <a href="index.html">← HOME</a>
+    <h1>TIMELINE</h1>
   </header>
   <div id="months-container"></div>
-  <div id="scroll-hint">SCROLL TO EXPLORE</div>
+  <div id="scroll-hint">scroll to explore the most loved artworks</div>
   <script src="months-timeline.js"></script>
+  <script src="site-nav.js"></script>
+  <script src="site-chat.js"></script>
+  <script src="chatbot.js"></script>
 </body>
 </html>

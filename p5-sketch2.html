@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>2D Sketch 2</title>
+    <title>2D Canvas.2</title>
+    <link rel="stylesheet" href="site-back.css">
+    <link rel="stylesheet" href="site-chat.css">
+    <link rel="stylesheet" href="site-nav.css">
     <style>
         :root {
             color-scheme: dark;
-            font-family: monospace;
         }
 
         * {
@@ -18,11 +20,13 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background: #090909;
+            background: #000;
             color: #f2f2f2;
             display: grid;
             place-items: center;
             overflow: hidden;
+            padding-top: calc(var(--site-nav-height, 48px) + 16px);
+            box-sizing: border-box;
         }
 
         .page {
@@ -59,20 +63,23 @@
             width: 100%;
             height: auto;
             border: 1px solid rgba(255, 255, 255, 0.12);
-            background: #111;
+            background: #000;
         }
     </style>
 </head>
 
 <body>
+    <a href="index.html" class="back-btn">← BACK</a>
     <div class="page">
         <div class="topbar">
-            <h1 style="margin: 0; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;">2D Sketch 2</h1>
-            <a href="index.html">← Home</a>
+            <h1 style="margin: 0; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;">2D Canvas.2</h1>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
         <script src="sketch2.js"></script>
     </div>
+    <script src="site-nav.js"></script>
+    <script src="site-chat.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 
 </html>

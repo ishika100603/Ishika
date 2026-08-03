@@ -3,16 +3,18 @@
 
   const width = window.innerWidth;
   const height = window.innerHeight;
+  const panelReserve = Math.min(360, Math.max(280, width * 0.34));
+  const graphWidth = width - panelReserve;
 
   const svg = d3.select('#graph-container')
     .append('svg')
-    .attr('width', width)
+    .attr('width', graphWidth)
     .attr('height', height)
     .style('touch-action', 'none')
-    .style('background', '#f0e9d8');
+    .style('background', '#000');
 
-  const BROWN = '#5c4a3d';
-  const BROWN_SOFT = 'rgba(92, 74, 61, 0.55)';
+  const BROWN = '#d4c8bc';
+  const BROWN_SOFT = 'rgba(212, 200, 188, 0.55)';
 
   const rootG = svg.append('g');
   const defs = svg.append('defs');
@@ -74,16 +76,16 @@
     .attr('width', '200%').attr('height', '200%');
   ambientBlur.append('feGaussianBlur').attr('stdDeviation', '42');
 
-  const clusterR = Math.min(width, height) * 0.34;
-  const cx = width / 2;
+  const clusterR = Math.min(graphWidth, height) * 0.34;
+  const cx = graphWidth * 0.5;
   const cy = height / 2;
 
   const ambientLayer = rootG.append('g')
     .attr('class', 'ambient-layer')
     .attr('pointer-events', 'none');
   [
-    [cx * 0.62, cy * 0.88, clusterR * 1.15, 'rgba(255,210,228,0.42)'],
-    [cx * 1.38, cy * 0.72, clusterR * 0.95, 'rgba(184,232,204,0.32)'],
+    [cx * 0.72, cy * 0.88, clusterR * 1.15, 'rgba(255,210,228,0.42)'],
+    [cx * 1.22, cy * 0.72, clusterR * 0.95, 'rgba(184,232,204,0.32)'],
     [cx, cy * 1.12, clusterR * 1.25, 'rgba(255,228,168,0.28)'],
   ].forEach(([x, y, r, fill]) => {
     ambientLayer.append('circle').attr('cx', x).attr('cy', y).attr('r', r)
@@ -152,7 +154,7 @@
 
   const zoomControls = d3.select('body').append('div')
     .attr('id', 'zoom-controls')
-    .style('position', 'fixed').style('bottom', '30px').style('right', '400px')
+    .style('position', 'fixed').style('bottom', '30px').style('left', '36px')
     .style('z-index', 20).style('display', 'flex').style('gap', '8px');
 
   function zoomBtn(label, onClick) {
@@ -177,9 +179,9 @@
 
   zoomLayer.insert('rect', ':first-child')
     .attr('class', 'pan-surface')
-    .attr('x', -width)
+    .attr('x', -graphWidth)
     .attr('y', -height)
-    .attr('width', width * 3)
+    .attr('width', graphWidth * 3)
     .attr('height', height * 3)
     .attr('fill', 'transparent')
     .style('pointer-events', 'all');
@@ -469,7 +471,7 @@
   function focusOn(d) {
     const targetScale = 2.4;
     const transform = d3.zoomIdentity
-      .translate(width / 2, height / 2)
+      .translate(cx, cy)
       .scale(targetScale)
       .translate(-d.x, -d.y);
     svg.transition().duration(750).ease(d3.easeCubicOut).call(zoomBehavior.transform, transform);

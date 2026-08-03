@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Scene 2</title>
+    <title>3D Canvas.2</title>
+    <link rel="stylesheet" href="site-back.css">
+    <link rel="stylesheet" href="site-chat.css">
+    <link rel="stylesheet" href="site-nav.css">
     <style>
         :root {
             color-scheme: dark;
-            font-family: monospace;
         }
 
         * {
@@ -21,7 +23,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #060606;
+            background: #000;
             color: #f2f2f2;
         }
 
@@ -62,14 +64,17 @@
 </head>
 
 <body>
+    <a href="index.html" class="back-btn">← BACK</a>
     <div class="topbar">
-        <strong style="font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;">3D Scene 2</strong>
-        <a href="index.html">← Home</a>
+        <strong style="font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;">3D Canvas.2</strong>
     </div>
 
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="scene2.js"></script>
+    <script src="site-nav.js"></script>
+    <script src="site-chat.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 
 </html>

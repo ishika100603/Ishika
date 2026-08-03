@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap');
+
+:root {
+  --site-nav-height: 48px;
+  --site-font: 'Instrument Sans', sans-serif;
+}
+
+body {
+  font-family: var(--site-font);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+svg text {
+  font-family: var(--site-font);
+}
+
+body.has-site-nav {
+  --site-nav-height: 48px;
+}
+
+body.has-site-nav.page-landing {
+  padding-top: 0;
+}
+
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  height: var(--site-nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: clamp(8px, 1vw, 16px);
+  padding: 0 clamp(16px, 2.5vw, 36px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(6, 6, 6, 0.88);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.site-nav a {
+  flex: 0 1 auto;
+  text-align: center;
+  color: rgba(242, 242, 242, 0.88);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.site-nav a:hover,
+.site-nav a.is-active {
+  color: #c8c2b8;
+}
+
+body.has-site-nav.page-geospatial .site-nav {
+  background: rgba(6, 6, 6, 0.28);
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+body.has-site-nav .back-btn:not(.back-btn--inline) {
+  top: calc(var(--site-nav-height) + 10px);
+}
+
+body.has-site-nav header {
+  top: var(--site-nav-height);
+}
+
+body.has-site-nav .topbar {
+  top: calc(var(--site-nav-height) + 10px);
+}
+
+body.has-site-nav #masthead.hud {
+  top: var(--site-nav-height);
+}
+
+@media (max-width: 960px) {
+  .site-nav {
+    height: auto;
+    min-height: var(--site-nav-height);
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 8px 12px;
+    padding: 8px 12px;
+  }
+
+  .site-nav a {
+    flex: 0 1 auto;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    padding: 2px 0;
+  }
+
+  body.has-site-nav {
+    --site-nav-height: 64px;
+  }
+}

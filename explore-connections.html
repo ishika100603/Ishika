@@ -3,46 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <title>Relational Structures</title>
+  <link rel="stylesheet" href="site-back.css">
+  <link rel="stylesheet" href="site-chat.css">
+  <link rel="stylesheet" href="site-nav.css">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    background: #f0e9d8;
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    background: #000;
     overflow: hidden;
     height: 100vh;
   }
   header {
-    position: fixed; top:0; left:0; right:0; z-index:20;
+    position: fixed; top: var(--site-nav-height, 48px); left:0; right:0; z-index:20;
     display:flex; justify-content:space-between; align-items:center;
     padding: 18px 36px;
-    background: rgba(240,233,216,0.75);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(20,15,10,0.08);
+    background: transparent;
+    border-bottom: none;
+    pointer-events: none;
   }
-  header h1 { font-size:13px; letter-spacing:4px; color:#221c14; font-weight:600; }
-  header a { color:#221c14; text-decoration:none; font-size:12px; letter-spacing:2px; }
+  header h1 { font-size:13px; letter-spacing:4px; color:#f0e9d8; font-weight:600; pointer-events: auto; }
+  header a { color:#f0e9d8; text-decoration:none; font-size:12px; letter-spacing:2px; pointer-events: auto; }
+
+  #right-panel {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: min(300px, 32vw);
+    max-height: calc(100vh - var(--site-nav-height, 48px) - 100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 18px;
+    pointer-events: none;
+  }
+
+  body.page-relational.has-site-nav #search-box {
+    position: relative;
+    top: auto;
+    left: auto;
+  }
 
   #search-box {
-    position: fixed; top: 70px; left: 36px; z-index: 20;
-    background: rgba(255,255,255,0.5);
-    border: 1px solid rgba(20,15,10,0.12);
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 0 0 auto;
+    align-self: stretch;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 20px;
-    padding: 8px 16px;
+    padding: 10px 16px;
     backdrop-filter: blur(8px);
+    pointer-events: auto;
   }
   #search-box input {
     background: transparent; border: none; outline: none;
-    color: #221c14; font-size: 12px; letter-spacing: 1px;
-    width: 180px;
+    color: #f0e9d8; font-size: 12px; letter-spacing: 1px;
+    width: 100%;
   }
-  #search-box input::placeholder { color: rgba(20,15,10,0.4); }
+  #search-box input::placeholder { color: rgba(240,233,216,0.4); }
 
   #info-panel {
     position: fixed; bottom: 30px; left: 36px; z-index: 20;
     max-width: 320px;
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(20,15,10,0.1);
+    background: rgba(20,20,20,0.85);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
     padding: 16px 20px;
     backdrop-filter: blur(10px);
@@ -51,52 +80,54 @@
     pointer-events: none;
   }
   #info-panel.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-  #info-panel .label { font-size: 14px; color: #5c4a3d; letter-spacing: 1px; margin-bottom: 6px; }
-  #info-panel .category { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(20,15,10,0.45); margin-bottom: 8px; }
-  #info-panel .desc { font-size: 12px; line-height: 1.6; color: rgba(20,15,10,0.75); }
+  #info-panel .label { font-size: 14px; color: #d4c8bc; letter-spacing: 1px; margin-bottom: 6px; }
+  #info-panel .category { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(240,233,216,0.45); margin-bottom: 8px; }
+  #info-panel .desc { font-size: 12px; line-height: 1.6; color: rgba(240,233,216,0.75); }
   #info-panel .connections {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid rgba(20,15,10,0.08);
+    border-top: 1px solid rgba(255,255,255,0.08);
     font-size: 11px;
     line-height: 1.55;
-    color: rgba(20,15,10,0.62);
+    color: rgba(240,233,216,0.62);
   }
   #info-panel .connections span {
     display: inline-block;
     margin: 2px 6px 2px 0;
     padding: 2px 8px;
     border-radius: 10px;
-    background: rgba(92,74,61,0.08);
-    color: #5c4a3d;
+    background: rgba(255,255,255,0.08);
+    color: #d4c8bc;
     font-size: 10px;
   }
 
   #about-text {
-    position: fixed;
-    bottom: 30px;
-    right: 36px;
-    z-index: 20;
-    max-width: 340px;
+    position: relative;
+    bottom: auto;
+    right: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: none;
+    overflow-y: auto;
     font-size: 11px;
     line-height: 1.65;
-    color: rgba(92, 74, 61, 0.78);
+    color: rgba(240, 233, 216, 0.78);
     letter-spacing: 0.2px;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   #zoom-controls div {
-    color: #221c14 !important;
-    background: rgba(255,255,255,0.5) !important;
-    border-color: rgba(20,15,10,0.15) !important;
+    color: #f0e9d8 !important;
+    background: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.15) !important;
   }
 
-  svg { display: block; cursor: grab; background: #f0e9d8; }
+  svg { display: block; cursor: grab; background: #000; }
   svg:active { cursor: grabbing; }
 
   .node-label-soft {
     paint-order: stroke fill;
-    stroke: rgba(240, 233, 216, 0.9);
+    stroke: rgba(0, 0, 0, 0.85);
     stroke-width: 2.5px;
     stroke-linejoin: round;
   }
@@ -111,18 +142,29 @@
 
   #graph-container {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: min(340px, 34vw);
+    bottom: 0;
+  }
+
+  body.page-relational .back-btn {
+    top: calc(var(--site-nav-height, 48px) + 12px);
   }
 </style>
 </head>
-<body>
+<body class="page-relational">
+<a href="index.html" class="back-btn">← BACK</a>
 <header>
   <h1>RELATIONAL STRUCTURES</h1>
-  <a href="index.html">← HOME</a>
 </header>
 
-<div id="search-box">
-  <input id="search-input" type="text" placeholder="Search the network...">
+<div id="right-panel">
+  <div id="search-box">
+    <input id="search-input" type="text" placeholder="Search the network...">
+  </div>
+
+  <div id="about-text">This interactive structure maps my artistic practice as a living network of connections. At its center is Musecreate, my studio, branching outward into collections, individual artworks, and the inspirations, materials, techniques, textures, colours, and concepts that shape each piece. Rather than a static portfolio list, this visualization lets you explore how ideas, methods, and works are connected, click on any node to trace its relationships, or search for a specific piece to see how everything links back to the practice as a whole.</div>
 </div>
 
 <div id="info-panel">
@@ -132,11 +174,12 @@
   <div class="connections" id="panel-connections"></div>
 </div>
 
-<div id="about-text">This interactive structure maps my artistic practice as a living network of connections. At its center is Musecreate, my studio, branching outward into collections, individual artworks, and the inspirations, materials, techniques, textures, colours, and concepts that shape each piece. Rather than a static portfolio list, this visualization lets you explore how ideas, methods, and works are connected, click on any node to trace its relationships, or search for a specific piece to see how everything links back to the practice as a whole.</div>
-
 <div id="graph-container"></div>
 
 <script src="connections-data.js"></script>
 <script src="explore-connections.js"></script>
+<script src="site-nav.js"></script>
+<script src="site-chat.js"></script>
+<script src="chatbot.js"></script>
 </body>
 </html>

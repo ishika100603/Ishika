@@ -3,16 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>2D Sketch 1</title>
+    <title>2D Canvas.1</title>
+    <link rel="stylesheet" href="site-back.css">
+    <link rel="stylesheet" href="site-chat.css">
+    <link rel="stylesheet" href="site-nav.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <style>
         body {
             margin: 0;
-            background: #0a0a0a;
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-family: sans-serif;
         }
 
         header {
@@ -24,6 +26,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: var(--site-nav-height, 48px);
         }
 
         header a {
@@ -42,9 +45,9 @@
 </head>
 
 <body>
+    <a href="index.html" class="back-btn">← BACK</a>
     <header>
-        <h1>2D SKETCH 1</h1>
-        <a href="index.html">← HOME</a>
+        <h1>2D CANVAS.1</h1>
     </header>
 
     <script>
@@ -115,6 +118,9 @@
             }
         }
     </script>
+    <script src="site-nav.js"></script>
+    <script src="site-chat.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 
 </html>

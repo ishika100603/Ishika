@@ -1,0 +1,33 @@
+.back-btn {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 14px;
+  font-family: var(--site-font, 'Instrument Sans', sans-serif);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #f0f0f0;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.back-btn:hover {
+  color: #8ec5ff;
+  border-color: rgba(142, 197, 255, 0.4);
+}
+
+.back-btn--inline {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 100%;
+}

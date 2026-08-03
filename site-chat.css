@@ -1,0 +1,233 @@
+/* Chat toggle icon (default pages) */
+#chat-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9998;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.82);
+  color: #f0f0f0;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+#chat-toggle:hover {
+  color: #8ec5ff;
+  border-color: rgba(142, 197, 255, 0.4);
+}
+
+#chat-toggle.chat-toggle--active {
+  color: #8ec5ff;
+  border-color: rgba(142, 197, 255, 0.45);
+  transform: scale(0.96);
+}
+
+#chat-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Chat panel */
+#chatbot {
+  position: fixed;
+  right: 24px;
+  bottom: 84px;
+  width: 340px;
+  height: 460px;
+  background: rgba(8, 8, 8, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-family: var(--site-font, 'Instrument Sans', sans-serif);
+}
+
+#chatbot[hidden] {
+  display: none !important;
+}
+
+#chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#chat-minimize {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+#chat-minimize:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(142, 197, 255, 0.4);
+  color: #8ec5ff;
+}
+
+#chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#chat-messages .user {
+  margin-bottom: 14px;
+  color: #8ec5ff;
+}
+
+#chat-messages .bot {
+  margin-bottom: 18px;
+  color: #fff;
+}
+
+#chat-input-area {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+#chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#send-btn {
+  border: none;
+  background: #2d7cff;
+  color: #fff;
+  padding: 0 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+#send-btn:hover {
+  background: #5292ff;
+}
+
+body.page-geospatial #chatbot {
+  bottom: 84px;
+}
+
+body.page-geospatial #chat-toggle {
+  bottom: 24px;
+  right: 24px;
+}
+
+/* Doodle page: large panel, vertically centered; toggle sits in paper corner when minimized */
+body.chat-doodle #chat-toggle {
+  top: auto;
+  bottom: calc(24px + 20px);
+  right: calc(24px + 20px);
+  transform: none;
+}
+
+body.chat-doodle #chat-toggle.chat-toggle--active {
+  transform: scale(0.96);
+}
+
+body.chat-doodle:not(.chat-minimized) #chat-toggle {
+  display: none;
+}
+
+body.chat-doodle.chat-minimized #chatbot {
+  display: none !important;
+}
+
+body.chat-doodle #chatbot,
+#chatbot.chatbot--doodle {
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  width: min(400px, 34vw);
+  height: min(620px, 78vh);
+  right: 28px;
+}
+
+body.chat-doodle #chat-header {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+body.chat-doodle #chat-messages {
+  font-family: inherit;
+}
+
+body.chat-doodle #chat-input,
+body.chat-doodle #send-btn {
+  font-family: inherit;
+}
+
+@media (max-width: 900px) {
+  body.chat-doodle #chatbot,
+  #chatbot.chatbot--doodle {
+    width: min(360px, 92vw);
+    right: 16px;
+    height: min(560px, 72vh);
+  }
+}
+
+@media (max-width: 640px) {
+  #chatbot {
+    right: 16px;
+    left: 16px;
+    width: auto;
+    bottom: 80px;
+    height: min(420px, 58vh);
+  }
+
+  body.chat-doodle #chatbot,
+  #chatbot.chatbot--doodle {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
