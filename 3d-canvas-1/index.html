@@ -5,9 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Canvas.1</title>
-    <link rel="stylesheet" href="site-chat.css">
-    <link rel="stylesheet" href="site-nav.css">
-    <link rel="stylesheet" href="canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-chat.css">
+    <link rel="stylesheet" href="../shared/site-nav.css">
+    <link rel="stylesheet" href="../shared/canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-page-about.css">
     <style>
         :root {
             color-scheme: dark;
@@ -139,6 +140,11 @@
 <body class="has-canvas-base">
     <div class="canvas-base" aria-hidden="true"></div>
 
+    <div id="page-about-source" hidden>
+        <p>This continues the same idea running through the site, giving you something to move through rather than just look at. I converted my flat, two-dimensional artworks into cubes, letting each piece take on a physical form instead of staying an image. You can move them along all three axes, taking full advantage of having an actual 3D space to work in, and build your own composition out of pieces of mine. Underneath it all sits a mirror, which let me explore depth and reflection in a way a flat canvas never could.</p>
+        <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+    </div>
+
     <div class="canvas-intro">
         <h2>Our art, but your art too</h2>
         <p>You can consider them your lego set</p>
@@ -157,9 +163,10 @@
     <script src="https://unpkg.com/three@0.128.0/examples/js/objects/Reflector.js"></script>
     <script src="canvas3-cubes.js"></script>
     <script src="scene1.js"></script>
-    <script src="site-nav.js"></script>
-    <script src="site-chat.js"></script>
-    <script src="chatbot.js"></script>
+    <script src="../shared/site-nav.js"></script>
+    <script src="../shared/site-chat.js"></script>
+    <script src="../shared/site-page-about.js"></script>
+    <script src="../shared/chatbot.js"></script>
 </body>
 
 </html>

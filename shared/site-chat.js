@@ -33,10 +33,21 @@
     chatMinimize.hidden = true;
   }
 
+  function ensureFabGroup() {
+    let group = document.getElementById('site-fab-group');
+    if (group) return group;
+
+    group = document.createElement('div');
+    group.id = 'site-fab-group';
+    group.className = 'site-fab-group';
+    document.body.appendChild(group);
+    return group;
+  }
+
   function ensureChatToggle() {
     if (document.getElementById('chat-toggle')) return document.getElementById('chat-toggle');
 
-    document.body.insertAdjacentHTML('beforeend', `
+    ensureFabGroup().insertAdjacentHTML('beforeend', `
       <button id="chat-toggle" type="button" aria-label="Open chat" aria-expanded="false">
         ${chatIcon}
       </button>
@@ -46,6 +57,8 @@
   }
 
   function openChat() {
+    window.SitePageAbout?.close?.();
+    document.dispatchEvent(new CustomEvent('site-chat:open'));
     chatbot.hidden = false;
     chatbot.classList.remove('chatbot--minimized');
     document.body.classList.remove('chat-minimized');
@@ -70,6 +83,8 @@
     toggle.setAttribute('aria-expanded', 'false');
     toggle.classList.remove('chat-toggle--active');
   }
+
+  window.SiteChat = { open: openChat, close: closeChat };
 
   if (isDoodle) {
     chatbot.classList.add('chatbot--doodle');

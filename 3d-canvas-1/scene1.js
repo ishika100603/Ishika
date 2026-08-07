@@ -6,7 +6,7 @@
     const stackOverlap = cubeSize - 0.02;
     const halfSize = cubeSize / 2;
 
-    const scene = new THREE.Scene();
+const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
     scene.fog = new THREE.Fog(0x000000, 18, 55);
 
@@ -14,8 +14,8 @@
     camera.position.set(0, 6, 16);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 1);
     renderer.outputEncoding = THREE.sRGBEncoding;
 
@@ -27,10 +27,10 @@
         document.body.classList.add('has-canvas-base');
     }
 
-    document.body.appendChild(renderer.domElement);
+document.body.appendChild(renderer.domElement);
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
     controls.dampingFactor = 0.06;
     controls.minDistance = 5;
     controls.maxDistance = 32;
@@ -43,15 +43,15 @@
     };
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.15);
     keyLight.position.set(6, 12, 8);
-    scene.add(keyLight);
+scene.add(keyLight);
 
     const fillLight = new THREE.DirectionalLight(0x9ec8ff, 0.6);
     fillLight.position.set(-8, 5, -6);
-    scene.add(fillLight);
+scene.add(fillLight);
 
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
     rimLight.position.set(0, 3, -10);
@@ -519,18 +519,18 @@
         }
     });
 
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+}
 
-    animate();
+animate();
 
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
         if (mirrorReflector && mirrorReflector.getRenderTarget) {
             const target = mirrorReflector.getRenderTarget();

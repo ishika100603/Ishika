@@ -1,3 +1,20 @@
+/* Bottom-right action buttons (about + chat) */
+.site-fab-group {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-fab-group #chat-toggle {
+  position: static;
+  right: auto;
+  bottom: auto;
+}
+
 /* Chat toggle icon (default pages) */
 #chat-toggle {
   position: fixed;
@@ -154,16 +171,19 @@ body.page-geospatial #chatbot {
   bottom: 84px;
 }
 
-body.page-geospatial #chat-toggle {
+body.page-geospatial .site-fab-group {
   bottom: 24px;
   right: 24px;
 }
 
 /* Doodle page: large panel, vertically centered; toggle sits in paper corner when minimized */
-body.chat-doodle #chat-toggle {
-  top: auto;
+body.chat-doodle .site-fab-group {
   bottom: calc(24px + 20px);
   right: calc(24px + 20px);
+}
+
+body.chat-doodle #chat-toggle {
+  top: auto;
   transform: none;
 }
 
@@ -216,6 +236,12 @@ body.chat-doodle #send-btn {
 }
 
 @media (max-width: 640px) {
+  .site-fab-group {
+    right: 16px;
+    bottom: 16px;
+    gap: 8px;
+  }
+
   #chatbot {
     right: 16px;
     left: 16px;

@@ -1,5 +1,5 @@
 (function () {
-    const SKETCH_SRC = 'canvas2-sketch/sketch.png';
+    const SKETCH_SRC = 'images/sketch.png';
     const PHASE_ORDER = ['trunk', 'columns', 'arches', 'leaves', 'detail'];
     const PHASE_GAP_MS = 320;
     const TRACE_TIMEOUT_MS = 14000;

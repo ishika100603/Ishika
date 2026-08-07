@@ -5,9 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2D Canvas.4</title>
-    <link rel="stylesheet" href="site-chat.css">
-    <link rel="stylesheet" href="site-nav.css">
-    <link rel="stylesheet" href="canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-chat.css">
+    <link rel="stylesheet" href="../shared/site-nav.css">
+    <link rel="stylesheet" href="../shared/canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-page-about.css">
     <style>
         :root {
             color-scheme: dark;
@@ -78,12 +79,17 @@
 <body class="has-canvas-base">
     <div class="canvas-base" aria-hidden="true"></div>
 
+    <div id="page-about-source" hidden>
+        <p>Same experiment as before, a different piece run through the same process, with its own generated video embedded here.</p>
+        <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+    </div>
+
     <main class="video-stage" aria-label="2D Canvas.4 video">
         <div class="video-frame">
             <canvas id="canvas4-display" aria-hidden="true"></canvas>
             <video
                 id="canvas4-video"
-                src="canvas4-video/scene-video.mp4"
+                src="video/scene-video.mp4"
                 autoplay
                 muted
                 loop
@@ -95,13 +101,14 @@
         <p class="video-caption">Art that feels alive</p>
     </main>
 
-    <script src="canvas-video.js"></script>
+    <script src="../shared/canvas-video.js"></script>
     <script>
         mountCanvasVideo({ videoId: 'canvas4-video', canvasId: 'canvas4-display' });
     </script>
-    <script src="site-nav.js"></script>
-    <script src="site-chat.js"></script>
-    <script src="chatbot.js"></script>
+    <script src="../shared/site-nav.js"></script>
+    <script src="../shared/site-chat.js"></script>
+    <script src="../shared/site-page-about.js"></script>
+    <script src="../shared/chatbot.js"></script>
 </body>
 
 </html>

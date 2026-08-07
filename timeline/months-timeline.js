@@ -1,17 +1,17 @@
 (function () {
   const MONTHS = [
-    { label: 'JAN', image: 'january.jpeg' },
-    { label: 'FEB', image: 'february.jpeg' },
-    { label: 'MAR', image: 'march.jpeg' },
-    { label: 'APR', image: 'april.jpeg' },
-    { label: 'MAY', image: 'may.jpeg' },
-    { label: 'JUN', image: 'june.jpeg' },
-    { label: 'JUL', image: 'july.jpeg' },
-    { label: 'AUG', image: 'august.jpeg' },
-    { label: 'SEP', image: 'september.jpeg' },
-    { label: 'OCT', image: 'october.jpeg' },
-    { label: 'NOV', image: 'november.jpeg' },
-    { label: 'DEC', image: 'december.jpeg' },
+    { label: 'JAN', image: 'images/january.jpeg' },
+    { label: 'FEB', image: 'images/february.jpeg' },
+    { label: 'MAR', image: 'images/march.jpeg' },
+    { label: 'APR', image: 'images/april.jpeg' },
+    { label: 'MAY', image: 'images/may.jpeg' },
+    { label: 'JUN', image: 'images/june.jpeg' },
+    { label: 'JUL', image: 'images/july.jpeg' },
+    { label: 'AUG', image: 'images/august.jpeg' },
+    { label: 'SEP', image: 'images/september.jpeg' },
+    { label: 'OCT', image: 'images/october.jpeg' },
+    { label: 'NOV', image: 'images/november.jpeg' },
+    { label: 'DEC', image: 'images/december.jpeg' },
   ];
 
   const container = document.getElementById('months-container');

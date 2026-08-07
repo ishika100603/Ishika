@@ -1,9 +1,9 @@
 (function () {
     const FACE_TEXTURES = [
-        'canvas3-pyramid/face-book.png',
-        'canvas3-pyramid/face-book.png',
-        'canvas3-pyramid/face-book.png',
-        'canvas3-pyramid/face-book.png',
+        'images/face-book.png',
+        'images/face-book.png',
+        'images/face-book.png',
+        'images/face-book.png',
     ];
 
     const PYRAMID_HEIGHT = 5.6;

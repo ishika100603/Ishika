@@ -5,9 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2D Canvas.2</title>
-    <link rel="stylesheet" href="site-chat.css">
-    <link rel="stylesheet" href="site-nav.css">
-    <link rel="stylesheet" href="canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-chat.css">
+    <link rel="stylesheet" href="../shared/site-nav.css">
+    <link rel="stylesheet" href="../shared/canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-page-about.css">
     <style>
         :root {
             color-scheme: dark;
@@ -201,6 +202,11 @@
 <body class="has-canvas-base">
     <div class="canvas-base" aria-hidden="true"></div>
 
+    <div id="page-about-source" hidden>
+        <p>I kept coming back to the idea of experience, of watching something happen. So here, you get to watch one of my sketches build itself, stroke by stroke, from a blank page to the finished piece. I fed in the image along with my own process, style, technique, the order I actually draw things in, and let it play back as an animation. Added a speed control too, in case you get impatient watching me work.</p>
+        <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+    </div>
+
     <button type="button" id="speed-2x-btn" aria-pressed="false">2× Speed</button>
 
     <div class="page">
@@ -218,9 +224,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
     <script src="sketch2.js"></script>
-    <script src="site-nav.js"></script>
-    <script src="site-chat.js"></script>
-    <script src="chatbot.js"></script>
+    <script src="../shared/site-nav.js"></script>
+    <script src="../shared/site-chat.js"></script>
+    <script src="../shared/site-page-about.js"></script>
+    <script src="../shared/chatbot.js"></script>
 </body>
 
 </html>

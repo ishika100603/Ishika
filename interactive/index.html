@@ -6,9 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Show us what you're visualising</title>
 
-  <link rel="stylesheet" href="site-back.css">
-  <link rel="stylesheet" href="site-chat.css">
-  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="../shared/site-back.css">
+  <link rel="stylesheet" href="../shared/site-chat.css">
+  <link rel="stylesheet" href="../shared/site-nav.css">
+  <link rel="stylesheet" href="../shared/site-page-about.css">
   <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
 
   <style>
@@ -385,6 +386,10 @@
 </head>
 
 <body class="chat-doodle">
+  <div id="page-about-source" hidden>
+    <p>This is the page I'm most curious about. It's just a blank canvas, left open for whoever's visiting. Draw whatever comes to mind. Every submission gets saved into a growing gallery I can look through later, hoping to find ideas or directions I wouldn't have thought of on my own. When you hit submit, each stroke you drew falls away on its own, separately, because I wanted it to feel like every part of what you made was being handled with its own care.</p>
+    <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+  </div>
   <div id="stage">
     <div id="canvas-wrap">
       <canvas id="paperCanvas"></canvas>
@@ -397,7 +402,7 @@
         <p>and we'll bring it to life.</p>
       </div>
       <div id="masthead-actions">
-        <a href="index.html" class="back-btn back-btn--inline">← BACK</a>
+        <a href="../home/" class="back-btn back-btn--inline">← BACK</a>
         <button id="action-btn">Submit</button>
         <button id="galleryBtn">Gallery</button>
       </div>
@@ -988,9 +993,10 @@
     resizeCanvas();
     setCursor(currentBrush);
   </script>
-  <script src="site-nav.js"></script>
-  <script src="site-chat.js"></script>
-  <script src="chatbot.js"></script>
+  <script src="../shared/site-nav.js"></script>
+  <script src="../shared/site-chat.js"></script>
+  <script src="../shared/site-page-about.js"></script>
+  <script src="../shared/chatbot.js"></script>
 
 </body>
 

@@ -5,9 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2D Canvas.3</title>
-    <link rel="stylesheet" href="site-chat.css">
-    <link rel="stylesheet" href="site-nav.css">
-    <link rel="stylesheet" href="canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-chat.css">
+    <link rel="stylesheet" href="../shared/site-nav.css">
+    <link rel="stylesheet" href="../shared/canvas-base.css">
+    <link rel="stylesheet" href="../shared/site-page-about.css">
     <style>
         :root {
             color-scheme: dark;
@@ -81,13 +82,18 @@
 <body class="has-canvas-base">
     <div class="canvas-base" aria-hidden="true"></div>
 
+    <div id="page-about-source" hidden>
+        <p>I got curious about what would happen if one of my pieces could move on its own. I ran the artwork through an AI video model, generated a short video from it, and embedded that video file directly into this canvas.</p>
+        <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+    </div>
+
     <main class="video-stage" aria-label="2D Canvas.3 video">
         <div class="video-stack">
             <div class="video-frame">
                 <canvas id="canvas3-display" aria-hidden="true"></canvas>
                 <video
                     id="canvas3-video"
-                    src="canvas3-video/scene-video.mp4"
+                    src="video/scene-video.mp4"
                     autoplay
                     muted
                     loop
@@ -100,13 +106,14 @@
         </div>
     </main>
 
-    <script src="canvas-video.js"></script>
+    <script src="../shared/canvas-video.js"></script>
     <script>
         mountCanvasVideo({ videoId: 'canvas3-video', canvasId: 'canvas3-display', small: true });
     </script>
-    <script src="site-nav.js"></script>
-    <script src="site-chat.js"></script>
-    <script src="chatbot.js"></script>
+    <script src="../shared/site-nav.js"></script>
+    <script src="../shared/site-chat.js"></script>
+    <script src="../shared/site-page-about.js"></script>
+    <script src="../shared/chatbot.js"></script>
 </body>
 
 </html>

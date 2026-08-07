@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timeline</title>
-  <link rel="stylesheet" href="site-back.css">
-  <link rel="stylesheet" href="site-chat.css">
-  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="../shared/site-back.css">
+  <link rel="stylesheet" href="../shared/site-chat.css">
+  <link rel="stylesheet" href="../shared/site-nav.css">
+  <link rel="stylesheet" href="../shared/site-page-about.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -69,15 +70,20 @@
   </style>
 </head>
 <body>
-  <a href="index.html" class="back-btn">← BACK</a>
+  <div id="page-about-source" hidden>
+    <p>I wanted a way to look back at our favorite work over time, as a timeline. This lets you scroll through how the studio's work has shifted and grown, month by month.</p>
+    <p class="page-about__meta">An AI assistant sits on every page too, in case anything comes up while you're exploring.</p>
+  </div>
+  <a href="../home/" class="back-btn">← BACK</a>
   <header>
     <h1>TIMELINE</h1>
   </header>
   <div id="months-container"></div>
   <div id="scroll-hint">scroll to explore the most loved artworks</div>
   <script src="months-timeline.js"></script>
-  <script src="site-nav.js"></script>
-  <script src="site-chat.js"></script>
-  <script src="chatbot.js"></script>
+  <script src="../shared/site-nav.js"></script>
+  <script src="../shared/site-chat.js"></script>
+  <script src="../shared/site-page-about.js"></script>
+  <script src="../shared/chatbot.js"></script>
 </body>
 </html>

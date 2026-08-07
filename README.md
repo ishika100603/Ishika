@@ -1,38 +1,41 @@
-# Questioning Everything Always
+# Muse Create Portfolio
 
-This project is a single-page interactive web experience built with vanilla HTML, CSS, and JavaScript, using Three.js from a CDN.
+Interactive art portfolio for **Muse Create**, built with vanilla HTML, CSS, and JavaScript.
 
-## Overview
-The scene creates a dark cinematic forest at night. A road stretches into the distance, dense trees line both sides, and a car moves along the road while two forward-facing headlights reveal a large block of 3D text only when the light reaches it.
+## Repository layout
 
-## Core Features
-- A fully 3D nighttime forest environment with fog and a dark road surface
-- Large 3D typography generated with Three.js TextGeometry and a bold font loaded via FontLoader
-- A custom car assembled from basic Three.js primitives such as boxes, cylinders, and a windshield
-- Two narrow spotlights attached to the front of the car that act as the only visible light source
-- Mouse-based driving control with smooth camera follow and keyboard steering using arrow keys or WASD
-- A minimal scene that avoids extra UI, overlays, or build tools
+| Folder | Menu label | Description |
+|--------|------------|-------------|
+| [`home/`](home/) | Home | Drive-through Three.js scene with headlight text reveals |
+| [`2d-canvas-1/`](2d-canvas-1/) | 2D Canvas.1 | Scrollable artwork grid with hover previews |
+| [`2d-canvas-2/`](2d-canvas-2/) | 2D Canvas.2 | Animated sketch playback on torn paper |
+| [`2d-canvas-3/`](2d-canvas-3/) | 2D Canvas.3 | AI-generated video, centered |
+| [`2d-canvas-4/`](2d-canvas-4/) | 2D Canvas.4 | AI-generated video, fullscreen |
+| [`3d-canvas-1/`](3d-canvas-1/) | 3D Canvas.1 | Draggable textured cubes on a mirror floor |
+| [`3d-canvas-2/`](3d-canvas-2/) | 3D Canvas.2 | Art on a lampshade in a small 3D gallery |
+| [`timeline/`](timeline/) | Timeline | Month-by-month studio work scroll |
+| [`relational-structures/`](relational-structures/) | Relational Structures | D3 network of materials and decisions |
+| [`geospatial/`](geospatial/) | Geospatial | Mapbox delivery network from Raipur |
+| [`interactive/`](interactive/) | Interactive | Visitor drawing canvas with Firebase gallery |
+| [`shared/`](shared/) | — | Navigation, chat, about panel, and shared styles |
+| [`chatbot-backend/`](chatbot-backend/) | — | Firebase Cloud Function for the portfolio assistant |
 
-## Project Structure
-- index.html — the entry page that loads the module-based Three.js scene
-- styles.css — minimal page styling to remove browser defaults and ensure the canvas fills the screen
-- script.js — scene setup, geometry creation, fog, camera motion, car controls, and headlight logic
+Each page folder contains its own `index.html`, assets, scripts, and a `README.md`.
 
-## How It Works
-1. The page loads the Three.js scene in a single HTML file.
-2. A dark road and a field of trees are created in 3D space.
-3. The text is placed flat on the road and remains dark and nearly unreadable until illuminated.
-4. The car moves based on mouse position and keyboard input.
-5. The headlights reveal the text only when the beam directly reaches it, creating a dramatic hidden-message effect.
+## Preview locally
 
-## Controls
-- Move the mouse to steer the car across the road
-- Use the arrow keys or WASD to drive forward, backward, and steer
+Open [`index.html`](index.html) (redirects to `home/`), or serve the repo root with any static file server:
 
-## Preview
-Open index.html in a browser, or serve the project folder from a local server such as Python's built-in HTTP server.
+```bash
+python -m http.server 8000
+```
+
+Then visit `http://localhost:8000/home/`.
 
 ## Notes
-- No frameworks or build tools are used.
-- The experience relies entirely on vanilla JavaScript and Three.js.
-- The scene intentionally keeps the environment dark so the headlights are the only source of readable light.
+
+- No build step required for the front end.
+- Geospatial requires a Mapbox access token in `geospatial/index.html`.
+- The chatbot calls a Firebase Cloud Function configured in `shared/chatbot.js`.
+
+See also [`STYLE_AND_CONCEPT.md`](STYLE_AND_CONCEPT.md) for the visual direction of the home experience.
